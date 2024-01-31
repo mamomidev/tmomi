@@ -29,5 +29,4 @@ public class Event {
 	private String eventImage;
 
 	private String eventDescription;
-
 }
