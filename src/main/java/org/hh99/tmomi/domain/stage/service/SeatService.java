@@ -38,12 +38,14 @@ public class SeatService {
 	public SeatResponseDto updateSeat(Long seatId, SeatRequestDto seatRequestDto) {
 		Seat seat = seatRepository.findById(seatId).orElseThrow(() -> new EntityNotFoundException());
 		seat.updateNameAndCapacity(seatRequestDto);
+
 		return new SeatResponseDto(seat);
 	}
 
 	public SeatResponseDto deleteSeat(Long seatId) {
 		Seat seat = seatRepository.findById(seatId).orElseThrow(() -> new EntityNotFoundException());
 		seatRepository.deleteById(seatId);
+
 		return new SeatResponseDto(seat);
 	}
 }

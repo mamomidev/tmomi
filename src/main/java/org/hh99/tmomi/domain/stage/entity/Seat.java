@@ -23,7 +23,7 @@ public class Seat {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "stageId")
+	@JoinColumn(name = "stage_id")
 	private Stage stage;
 
 	@Column

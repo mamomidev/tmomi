@@ -36,12 +36,14 @@ public class StageService {
 	public StageResponseDto updateStage(Long stageId, StageRequestDto stageRequestDto) {
 		Stage stage = stageRepository.findById(stageId).orElseThrow(() -> new EntityNotFoundException());
 		stage.updateAddress(stageRequestDto);
+
 		return new StageResponseDto(stage);
 	}
 
 	public StageResponseDto deleteStage(Long stageId) {
 		Stage stage = stageRepository.findById(stageId).orElseThrow(() -> new EntityNotFoundException());
 		stageRepository.deleteById(stageId);
+		
 		return new StageResponseDto(stage);
 	}
 }
