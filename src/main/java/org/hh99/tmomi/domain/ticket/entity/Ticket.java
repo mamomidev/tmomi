@@ -6,6 +6,7 @@ import org.hh99.tmomi.domain.event.entity.Event;
 import org.hh99.tmomi.domain.event.entity.EventTimes;
 import org.hh99.tmomi.domain.stage.entity.Seat;
 import org.hh99.tmomi.domain.ticket.TicketStatus;
+import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -54,4 +55,17 @@ public class Ticket implements Serializable {
 
 	@Column
 	private String seatNumber;
+
+	public Ticket(TicketRequestDto ticketRequestDto, User user, Event event, EventTimes eventTimes, Seat seat) {
+		this.user = user;
+		this.event = event;
+		this.eventTimes = eventTimes;
+		this.seat = seat;
+		this.ticketStatus = ticketRequestDto.getTicketStatus();
+		this.seatNumber = ticketRequestDto.getSeatNumber();
+	}
+
+	public void update(TicketRequestDto ticketRequestDto) {
+		this.ticketStatus = ticketRequestDto.getTicketStatus();
+	}
 }

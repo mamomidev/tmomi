@@ -9,4 +9,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class TicketController {
+
 }
