@@ -1,4 +1,4 @@
-package org.hh99.tmomi.domain.entity;
+package org.hh99.tmomi.domain.event.entity;
 
 import java.time.LocalDate;
 
