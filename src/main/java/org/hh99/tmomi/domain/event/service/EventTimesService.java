@@ -19,31 +19,26 @@ public class EventTimesService {
 	private final EventRepository eventRepository;
 
 	public EventTimesResponseDto createEventTimes(EventTimesRequestDto eventTimesRequestDto) {
-		Event event = getEventById(eventTimesRequestDto.getEventId());
+		Event event = eventRepository.findById(eventTimesRequestDto.getEventId())
+			.orElseThrow(() -> new EntityNotFoundException(""));
 		EventTimes eventTimes = new EventTimes(eventTimesRequestDto, event);
 
 		return new EventTimesResponseDto(eventTimes);
 	}
 
 	public EventTimesResponseDto updateEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventTimeId) {
-		EventTimes eventTimes = getEventTimeById(eventTimeId);
+		EventTimes eventTimes = eventTimesRepository.findById(eventTimeId)
+			.orElseThrow(() -> new EntityNotFoundException(""));
 		eventTimes.update(eventTimesRequestDto);
 
 		return new EventTimesResponseDto(eventTimes);
 	}
 
 	public EventTimesResponseDto deleteEventTimes(Long eventTimeId) {
-		EventTimes eventTimes = getEventTimeById(eventTimeId);
+		EventTimes eventTimes = eventTimesRepository.findById(eventTimeId)
+			.orElseThrow(() -> new EntityNotFoundException(""));
 		eventTimesRepository.delete(eventTimes);
 
 		return new EventTimesResponseDto(eventTimes);
-	}
-
-	private Event getEventById(Long eventId) {
-		return eventRepository.findById(eventId).orElseThrow(EntityNotFoundException::new);
-	}
-
-	private EventTimes getEventTimeById(Long eventTimeId) {
-		return eventTimesRepository.findById(eventTimeId).orElseThrow(EntityNotFoundException::new);
 	}
 }

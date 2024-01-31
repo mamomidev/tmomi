@@ -25,20 +25,16 @@ public class EventService {
 
 	@Transactional
 	public EventResponseDto updateEvent(EventRequestDto eventRequestDto, Long eventId) {
-		Event event = getEventById(eventId);
+		Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(""));
 		event.update(eventRequestDto);
 
 		return new EventResponseDto(event);
 	}
 
 	public EventResponseDto deleteEvent(Long eventId) {
-		Event event = getEventById(eventId);
+		Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(""));
 		eventRepository.delete(event);
 
 		return new EventResponseDto(event);
-	}
-
-	private Event getEventById(Long eventId) {
-		return eventRepository.findById(eventId).orElseThrow(EntityNotFoundException::new);
 	}
 }
