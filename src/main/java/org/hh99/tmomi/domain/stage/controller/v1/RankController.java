@@ -25,7 +25,7 @@ public class RankController {
 
 	private final RankService rankService;
 
-	@GetMapping("/stages/{stageId}/seats")
+	@GetMapping("/stages/{stageId}/ranks")
 	public ResponseEntity<List<RankResponseDto>> getRankListByStageId(@PathVariable Long stageId) {
 		return ResponseEntity.ok(rankService.getRankListByStageId(stageId));
 	}
