@@ -25,23 +25,23 @@ public class RankController {
 
 	private final RankService rankService;
 
-	@GetMapping("/stage/{stageId}/seat")
+	@GetMapping("/stages/{stageId}/seats")
 	public ResponseEntity<List<RankResponseDto>> getRankListByStageId(@PathVariable Long stageId) {
 		return ResponseEntity.ok(rankService.getRankListByStageId(stageId));
 	}
 
-	@PostMapping("/rank")
+	@PostMapping("/ranks")
 	public ResponseEntity<RankResponseDto> createRank(@RequestBody RankRequestDto rankRequestDto) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(rankService.createRank(rankRequestDto));
 	}
 
-	@PutMapping("/rank/{rankId}")
+	@PutMapping("/ranks/{rankId}")
 	public ResponseEntity updateRank(@PathVariable Long rankId, @RequestBody RankRequestDto rankRequestDto) {
 		rankService.updateRank(rankId, rankRequestDto);
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("/rank/{rankId}")
+	@DeleteMapping("/ranks/{rankId}")
 	public ResponseEntity deleteRank(@PathVariable Long rankId) {
 		rankService.deleteRank(rankId);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

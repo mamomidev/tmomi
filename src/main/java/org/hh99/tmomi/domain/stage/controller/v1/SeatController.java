@@ -25,23 +25,23 @@ public class SeatController {
 
 	private final SeatService seatService;
 
-	@GetMapping("/stage/{stageId}/seat")
+	@GetMapping("/stages/{stageId}/seats")
 	public ResponseEntity<List<SeatResponseDto>> getSeatListByStageId(@PathVariable Long stageId) {
 		return ResponseEntity.ok(seatService.getSeatListByStageId(stageId));
 	}
 
-	@PostMapping("/seat")
+	@PostMapping("/seats")
 	public ResponseEntity<SeatResponseDto> createSeat(@RequestBody SeatRequestDto seatRequestDto) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(seatService.createSeat(seatRequestDto));
 	}
 
-	@PutMapping("/seat/{seatId}")
+	@PutMapping("/seats/{seatId}")
 	public ResponseEntity updateSeat(@PathVariable Long seatId, @RequestBody SeatRequestDto seatRequestDto) {
 		seatService.updateSeat(seatId, seatRequestDto);
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("/seat/{seatId}")
+	@DeleteMapping("/seats/{seatId}")
 	public ResponseEntity deleteSeat(@PathVariable Long seatId) {
 		seatService.deleteSeat(seatId);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -25,29 +25,29 @@ public class StageController {
 
 	private final StageService stageService;
 
-	@GetMapping("/stage")
+	@GetMapping("/stages")
 	public ResponseEntity<List<StageResponseDto>> getStageListByAddress(@RequestBody StageRequestDto stageRequestDto) {
 		return ResponseEntity.ok(stageService.getStageListByAddress(stageRequestDto));
 	}
 
-	@GetMapping("/stage/{stageId}")
+	@GetMapping("/stages/{stageId}")
 	public ResponseEntity<StageResponseDto> getStage(@PathVariable Long stageId) {
 		return ResponseEntity.ok(stageService.getStage(stageId));
 	}
 
-	@PostMapping("/stage")
+	@PostMapping("/stages")
 	public ResponseEntity createStage(@RequestBody StageRequestDto stageRequestDto) {
 		stageService.createStage(stageRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@PutMapping("/stage/{stageId}")
+	@PutMapping("/stages/{stageId}")
 	public ResponseEntity updateStage(@PathVariable Long stageId, @RequestBody StageRequestDto stageRequestDto) {
 		stageService.updateStage(stageId, stageRequestDto);
 		return ResponseEntity.ok().build();
 	}
 
-	@DeleteMapping("/stage/{stageId}")
+	@DeleteMapping("/stages/{stageId}")
 	public ResponseEntity deleteStage(@PathVariable Long stageId) {
 		stageService.deleteStage(stageId);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
