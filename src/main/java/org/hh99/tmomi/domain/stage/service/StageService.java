@@ -9,6 +9,7 @@ import org.hh99.tmomi.domain.stage.entity.Stage;
 import org.hh99.tmomi.domain.stage.repository.StageRepository;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -19,10 +20,16 @@ public class StageService {
 	private final StageRepository stageRepository;
 
 	public List<StageResponseDto> getStageListByAddress(StageRequestDto stageRequestDto) {
-		return stageRepository.findByAddress(stageRequestDto.getAddress())
+		List<StageResponseDto> stageList = stageRepository.findByAddress(stageRequestDto.getAddress())
 			.stream()
 			.map(StageResponseDto::new)
 			.collect(Collectors.toList());
+
+		if (stageList.size() == 0) {
+			throw new EntityExistsException();
+		}
+		
+		return stageList;
 	}
 
 	public StageResponseDto getStage(Long stageId) {
@@ -43,7 +50,7 @@ public class StageService {
 	public StageResponseDto deleteStage(Long stageId) {
 		Stage stage = stageRepository.findById(stageId).orElseThrow(() -> new EntityNotFoundException());
 		stageRepository.deleteById(stageId);
-		
+
 		return new StageResponseDto(stage);
 	}
 }
