@@ -1,6 +1,7 @@
 package org.hh99.tmomi.domain.user.entity;
 
 import org.hh99.tmomi.domain.user.UserAuthEnum;
+import org.hh99.tmomi.domain.user.dto.UserRequestDto;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,4 +33,11 @@ public class User {
 
 	@Column
 	private String email;
+
+	public User(UserRequestDto userRequestDto) {
+		this.email = userRequestDto.getEmail();
+		this.password = userRequestDto.getPassword();
+		this.phone = userRequestDto.getPhone();
+		this.author = userRequestDto.getAuthor();
+	}
 }
