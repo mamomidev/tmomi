@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,22 +25,18 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-		return httpSecurity
-			.httpBasic().disable()
-			.csrf().disable()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
-			.authorizeHttpRequests()
-			// 로그인
-			.requestMatchers("/api/signin").permitAll()
-			.requestMatchers("/api").permitAll()
-			// 회원 가입
-			.requestMatchers("/api/signup").permitAll()
-			.requestMatchers("/api/admin").hasRole("ADMIN")
-			.anyRequest().authenticated()
-			.and()
-			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
-			.build();
+		httpSecurity
+			.httpBasic(HttpBasicConfigurer::disable)
+			.csrf(CsrfConfigurer::disable)
+			.sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.authorizeHttpRequests(authorize ->
+				authorize
+					.requestMatchers("/api/signin", "/api/signup").permitAll()
+					.requestMatchers("/api/admin").hasRole("ADMIN")
+					.anyRequest().authenticated())
+			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+				UsernamePasswordAuthenticationFilter.class);
+		return httpSecurity.build();
 
 	}
 
