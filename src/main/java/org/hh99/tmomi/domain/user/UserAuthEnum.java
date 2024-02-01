@@ -16,8 +16,8 @@ public enum UserAuthEnum {
 
 	public static class Authority {
 
-		public static final String USER = "AUTH_USER";
-		public static final String ADMIN = "AUTH_ADMIN";
+		public static final String USER = "USER";
+		public static final String ADMIN = "ADMIN";
 
 	}
 
