@@ -18,8 +18,8 @@ public class EventTimesService {
 	private final EventTimesRepository eventTimesRepository;
 	private final EventRepository eventRepository;
 
-	public EventTimesResponseDto createEventTimes(EventTimesRequestDto eventTimesRequestDto) {
-		Event event = eventRepository.findById(eventTimesRequestDto.getEventId())
+	public EventTimesResponseDto createEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventId) {
+		Event event = eventRepository.findById(eventId)
 			.orElseThrow(() -> new EntityNotFoundException(""));
 		EventTimes eventTimes = new EventTimes(eventTimesRequestDto, event);
 
