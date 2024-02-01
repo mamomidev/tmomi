@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class EventService {
@@ -36,5 +39,15 @@ public class EventService {
 		eventRepository.delete(event);
 
 		return new EventResponseDto(event);
+	}
+
+	public EventResponseDto getEvent(Long eventId) {
+		Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(""));
+
+		return new EventResponseDto(event);
+	}
+
+	public List<EventResponseDto> getEventListByEventName(String query) {
+		return eventRepository.findAllByEventName(query).stream().map(EventResponseDto::new).toList();
 	}
 }
