@@ -7,6 +7,7 @@ import org.hh99.tmomi.domain.stage.dto.stage.StageRequestDto;
 import org.hh99.tmomi.domain.stage.dto.stage.StageResponseDto;
 import org.hh99.tmomi.domain.stage.entity.Stage;
 import org.hh99.tmomi.domain.stage.repository.StageRepository;
+import org.hh99.tmomi.global.redis.RefreshTokenRepository;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityExistsException;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class StageService {
 
 	private final StageRepository stageRepository;
+	private final RefreshTokenRepository refreshTokenRepository;
 
 	public List<StageResponseDto> getStageListByAddress(StageRequestDto stageRequestDto) {
 		List<StageResponseDto> stageList = stageRepository.findByAddress(stageRequestDto.getAddress())
@@ -28,7 +30,7 @@ public class StageService {
 		if (stageList.size() == 0) {
 			throw new EntityExistsException();
 		}
-		
+
 		return stageList;
 	}
 

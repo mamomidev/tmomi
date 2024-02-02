@@ -42,27 +42,34 @@ public class JwtTokenProvider {
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
 
+		String accessToken = createAccessToken(authentication, authorities);
+		String refreshToken = createRefreshToken();
+
+		// refresh를 redis에 저장하는거고?
+
+		return JwtToken.builder()
+			.grantType("Bearer")
+			.accessToken(accessToken)
+			.build();
+	}
+
+	public String createAccessToken(Authentication authentication, String authorities) {
 		long now = (new Date()).getTime();
-
 		Date accessTokenExpiresln = new Date(now + 86400000);
-
-		String accessToken = Jwts.builder()
+		return Jwts.builder()
 			.setSubject(authentication.getName())
 			.claim("auth", authorities)
 			.setExpiration(accessTokenExpiresln)
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
+	}
 
-		String refreshToken = Jwts.builder()
+	public String createRefreshToken() {
+		long now = (new Date()).getTime();
+		return Jwts.builder()
 			.setExpiration(new Date(now + 86400000))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
-
-		return JwtToken.builder()
-			.grantType("Bearer")
-			.accessToken(accessToken)
-			.refreshToken(refreshToken)
-			.build();
 	}
 
 	public Authentication getAuthentication(String accessToken) {
