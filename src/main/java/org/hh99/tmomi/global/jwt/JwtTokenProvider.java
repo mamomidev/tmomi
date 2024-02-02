@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import org.hh99.tmomi.global.redis.RefreshToken;
+import org.hh99.tmomi.global.redis.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,8 +32,11 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtTokenProvider {
 
 	private final Key key;
+	private final RefreshTokenRepository refreshTokenRepository;
 
-	public JwtTokenProvider(@Value("${jwt.secret.key}") String secretKey) {
+	public JwtTokenProvider(@Value("${jwt.secret.key}") String secretKey,
+		RefreshTokenRepository refreshTokenRepository) {
+		this.refreshTokenRepository = refreshTokenRepository;
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
@@ -44,8 +49,11 @@ public class JwtTokenProvider {
 
 		String accessToken = createAccessToken(authentication, authorities);
 		String refreshToken = createRefreshToken();
-
-		// refresh를 redis에 저장하는거고?
+		
+		refreshTokenRepository.save(RefreshToken.builder()
+			.accessToken(accessToken)
+			.refreshToken(refreshToken)
+			.build());
 
 		return JwtToken.builder()
 			.grantType("Bearer")
@@ -65,9 +73,7 @@ public class JwtTokenProvider {
 	}
 
 	public String createRefreshToken() {
-		long now = (new Date()).getTime();
 		return Jwts.builder()
-			.setExpiration(new Date(now + 86400000))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
