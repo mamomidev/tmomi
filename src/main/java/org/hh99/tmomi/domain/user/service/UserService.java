@@ -57,7 +57,7 @@ public class UserService implements UserDetailsService {
 		return userRepository.findByEmail(email)
 			.map(user -> org.springframework.security.core.userdetails.User.builder()
 				.username(user.getEmail())
-				.password(passwordEncoder.encode(user.getPassword()))
+				.password(user.getPassword())
 				.roles(user.getAuthorities().toString())
 				.build())
 			.orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
@@ -68,6 +68,7 @@ public class UserService implements UserDetailsService {
 		if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
 			throw new IllegalArgumentException();
 		}
+		userRequestDto.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
 		userRequestDto.setAuthor(UserAuthEnum.USER);
 		return new UserResponseDto(userRepository.save(new User(userRequestDto)));
 	}

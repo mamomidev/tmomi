@@ -10,6 +10,7 @@ public class UserRequestDto {
 
 	private String email;
 	private String phone;
+	@Setter
 	private String password;
 	@Setter
 	private UserAuthEnum author;
