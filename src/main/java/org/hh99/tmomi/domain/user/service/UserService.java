@@ -1,5 +1,8 @@
 package org.hh99.tmomi.domain.user.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.hh99.tmomi.domain.user.UserAuthEnum;
 import org.hh99.tmomi.domain.user.dto.UserRequestDto;
 import org.hh99.tmomi.domain.user.dto.UserResponseDto;
@@ -17,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,12 +35,21 @@ public class UserService implements UserDetailsService {
 	private final PasswordEncoder passwordEncoder;
 
 	@Transactional
-	public JwtToken signIn(UserRequestDto userRequestDto) {
+	public JwtToken signIn(UserRequestDto userRequestDto, HttpServletResponse httpServletResponse) throws
+		UnsupportedEncodingException {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
 			userRequestDto.getEmail(),
 			userRequestDto.getPassword());
 		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-		return jwtTokenProvider.generateToken(authentication);
+
+		JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
+		Cookie cookie = new Cookie("Authorization",
+			URLEncoder.encode("Bearer " + jwtToken.getAccessToken(), "utf-8").replaceAll("\\+", "%20"));
+		cookie.setPath("/");
+		cookie.setMaxAge(60 * 60);  // 쿠키 유효 시간 : 1시간
+		httpServletResponse.addCookie(cookie);
+
+		return jwtToken;
 	}
 
 	@Override

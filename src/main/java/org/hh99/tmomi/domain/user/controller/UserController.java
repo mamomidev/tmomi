@@ -1,15 +1,17 @@
 package org.hh99.tmomi.domain.user.controller;
 
+import java.io.UnsupportedEncodingException;
+
 import org.hh99.tmomi.domain.user.dto.UserRequestDto;
 import org.hh99.tmomi.domain.user.dto.UserResponseDto;
 import org.hh99.tmomi.domain.user.service.UserService;
-import org.hh99.tmomi.global.jwt.JwtToken;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,8 +27,9 @@ public class UserController {
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<JwtToken> signIn(@RequestBody UserRequestDto userRequestDto) {
-		JwtToken jwtToken = userService.signIn(userRequestDto);
-		return ResponseEntity.ok(jwtToken);
+	public ResponseEntity signIn(HttpServletResponse httpServletResponse,
+		@RequestBody UserRequestDto userRequestDto) throws UnsupportedEncodingException {
+		userService.signIn(userRequestDto, httpServletResponse);
+		return ResponseEntity.ok().build();
 	}
 }
