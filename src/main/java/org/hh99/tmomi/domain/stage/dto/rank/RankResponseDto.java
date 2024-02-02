@@ -7,9 +7,10 @@ import lombok.Getter;
 
 @Getter
 public class RankResponseDto {
-	private Seat seat;
-	private String rankName;
-	private Integer price;
+
+	private final Seat seat;
+	private final String rankName;
+	private final Integer price;
 
 	public RankResponseDto(Rank rank) {
 		this.seat = rank.getSeat();

@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @RedisHash(value = "refreshToken", timeToLive = 1209600)
 public class RefreshToken {
+
 	@Id
 	private String accessToken;
 	private String refreshToken;

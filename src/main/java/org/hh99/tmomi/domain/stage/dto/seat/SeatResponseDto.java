@@ -7,9 +7,10 @@ import lombok.Getter;
 
 @Getter
 public class SeatResponseDto {
-	private Stage stage;
-	private String seatName;
-	private Integer seatCapacity;
+
+	private final Stage stage;
+	private final String seatName;
+	private final Integer seatCapacity;
 
 	public SeatResponseDto(Seat seat) {
 		this.stage = seat.getStage();

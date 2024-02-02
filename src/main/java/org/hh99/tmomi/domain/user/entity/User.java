@@ -56,7 +56,6 @@ public class User implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		UserAuthEnum auth = author;
 		String authority = auth.getAuthority();
-
 		SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(simpleGrantedAuthority);

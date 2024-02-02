@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Getter
 public class StageResponseDto {
-	private String address;
+
+	private final String address;
 
 	public StageResponseDto(Stage stage) {
 		this.address = stage.getAddress();
