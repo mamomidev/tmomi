@@ -48,9 +48,10 @@ public class JwtTokenProvider {
 			.collect(Collectors.joining(","));
 
 		String accessToken = createAccessToken(authentication.getName(), authorities);
-		String refreshToken = createRefreshToken();
+		String refreshToken = createRefreshToken(authentication.getName());
 
 		refreshTokenRepository.save(RefreshToken.builder()
+			.email(authentication.getName())
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build());
@@ -71,8 +72,9 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
-	public String createRefreshToken() {
+	public String createRefreshToken(String email) {
 		return Jwts.builder()
+			.setSubject(email)
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}

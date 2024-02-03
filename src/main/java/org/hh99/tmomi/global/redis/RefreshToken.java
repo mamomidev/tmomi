@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class RefreshToken {
 
 	@Id
+	private String email;
 	@Indexed
 	private String accessToken;
 	private String refreshToken;
