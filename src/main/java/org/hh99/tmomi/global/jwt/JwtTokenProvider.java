@@ -77,6 +77,11 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
+	public String createNewAccessToken(String accessToken) {
+		Claims claims = parseClaims(accessToken);
+		return createAccessToken((String)claims.get("sub"), (String)claims.get("auth"));
+	}
+
 	public Authentication getAuthentication(String accessToken) {
 
 		Claims claims = parseClaims(accessToken);
@@ -93,26 +98,24 @@ public class JwtTokenProvider {
 		return new UsernamePasswordAuthenticationToken(principal, "", authorities);
 	}
 
-	public boolean validateToken(String token) {
+	public void validateToken(String token) {
 		try {
 			Jwts.parserBuilder()
 				.setSigningKey(key)
 				.build()
 				.parseClaimsJws(token);
-			return true;
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token", e);
 		} catch (ExpiredJwtException e) {
-			log.info("Expired JWT Token", e);
+			log.info("Expired JWT AccessToken", e);
 		} catch (UnsupportedJwtException e) {
 			log.info("Unsupported JWT Token", e);
 		} catch (IllegalArgumentException e) {
 			log.info("JWT claims string is empty.", e);
 		}
-		return false;
 	}
 
-	public String validateRefreshToken(String accessToken) {
+	public void validateRefreshToken(String accessToken) {
 		String refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
 			.orElseThrow(() -> new ExpiredJwtException(null, null, ""))
 			.getRefreshToken();
@@ -122,8 +125,6 @@ public class JwtTokenProvider {
 				.setSigningKey(key)
 				.build()
 				.parseClaimsJws(refreshToken);
-			Claims claims = parseClaims(accessToken);
-			return createAccessToken((String)claims.get("sub"), (String)claims.get("auth"));
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token", e);
 		} catch (ExpiredJwtException e) {
@@ -133,7 +134,6 @@ public class JwtTokenProvider {
 		} catch (IllegalArgumentException e) {
 			log.info("JWT claims string is empty.", e);
 		}
-		return null;
 	}
 
 	private Claims parseClaims(String accessToken) {
