@@ -1,5 +1,7 @@
 package org.hh99.tmomi.global.jwt;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +27,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -146,4 +150,12 @@ public class JwtTokenProvider {
 		}
 	}
 
+	public void createCookieAccessToken(String accessToken, HttpServletResponse httpServletResponse) throws
+		UnsupportedEncodingException {
+		Cookie cookie = new Cookie("Authorization",
+			URLEncoder.encode("Bearer " + accessToken, "utf-8").replaceAll("\\+", "%20"));
+		cookie.setPath("/");
+		cookie.setMaxAge(60 * 60);  // 쿠키 유효 시간 : 1시간
+		httpServletResponse.addCookie(cookie);
+	}
 }
