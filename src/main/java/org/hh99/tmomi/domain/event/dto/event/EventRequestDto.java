@@ -16,4 +16,6 @@ public class EventRequestDto {
 	private String eventImage;
 
 	private String eventDescription;
+
+	private Long stageId;
 }
