@@ -1,24 +1,17 @@
 package org.hh99.tmomi.domain.user;
 
 public enum UserAuthEnum {
-	USER(Authority.USER),
-	ADMIN(Authority.ADMIN);
+	USER("USER"),
+	ADMIN("ADMIN");
 
-	private final String authority;
+	private final String name;
 
-	UserAuthEnum(String authority) {
-		this.authority = authority;
+	UserAuthEnum(String name) {
+		this.name = name;
 	}
 
 	public String getAuthority() {
-		return this.authority;
-	}
-
-	public static class Authority {
-
-		public static final String USER = "USER";
-		public static final String ADMIN = "ADMIN";
-
+		return this.name;
 	}
 
 }
