@@ -49,7 +49,7 @@ public class JwtTokenProvider {
 
 		String accessToken = createAccessToken(authentication, authorities);
 		String refreshToken = createRefreshToken();
-		
+
 		refreshTokenRepository.save(RefreshToken.builder()
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
