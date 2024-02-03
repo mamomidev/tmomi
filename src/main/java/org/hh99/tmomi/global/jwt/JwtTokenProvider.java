@@ -65,7 +65,8 @@ public class JwtTokenProvider {
 		return Jwts.builder()
 			.setSubject(email)
 			.claim("auth", auth)
-			.setExpiration(new Date((new Date()).getTime() + 86400000))
+			// .setExpiration(new Date((new Date()).getTime() + 86400000))
+			.setExpiration(new Date((new Date()).getTime() + 5))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
@@ -102,9 +103,7 @@ public class JwtTokenProvider {
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token", e);
 		} catch (ExpiredJwtException e) {
-			if (!validateRefreshToken(token)) {
-				log.info("Expired JWT Token", e);
-			}
+			log.info("Expired JWT Token", e);
 		} catch (UnsupportedJwtException e) {
 			log.info("Unsupported JWT Token", e);
 		} catch (IllegalArgumentException e) {
@@ -113,7 +112,7 @@ public class JwtTokenProvider {
 		return false;
 	}
 
-	private boolean validateRefreshToken(String accessToken) {
+	public String validateRefreshToken(String accessToken) {
 		String refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
 			.orElseThrow(() -> new ExpiredJwtException(null, null, ""))
 			.getRefreshToken();
@@ -123,14 +122,18 @@ public class JwtTokenProvider {
 				.setSigningKey(key)
 				.build()
 				.parseClaimsJws(refreshToken);
-
 			Claims claims = parseClaims(accessToken);
-			accessToken = createAccessToken((String)claims.get("sub"), (String)claims.get("auth"));
-
-			return true;
-		} catch (Exception e) {
-			return false;
+			return createAccessToken((String)claims.get("sub"), (String)claims.get("auth"));
+		} catch (SecurityException | MalformedJwtException e) {
+			log.info("Invalid JWT Token", e);
+		} catch (ExpiredJwtException e) {
+			log.info("Expired JWT Token", e);
+		} catch (UnsupportedJwtException e) {
+			log.info("Unsupported JWT Token", e);
+		} catch (IllegalArgumentException e) {
+			log.info("JWT claims string is empty.", e);
 		}
+		return null;
 	}
 
 	private Claims parseClaims(String accessToken) {
