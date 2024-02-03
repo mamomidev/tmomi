@@ -70,7 +70,6 @@ public class JwtTokenProvider {
 		return Jwts.builder()
 			.setSubject(email)
 			.claim("auth", auth)
-			// .setExpiration(new Date((new Date()).getTime() + 86400000))
 			.setExpiration(new Date((new Date()).getTime() + 43200000))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
@@ -81,11 +80,6 @@ public class JwtTokenProvider {
 			.setSubject(email)
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
-	}
-
-	public String createNewAccessToken(String accessToken) {
-		Claims claims = parseClaims(accessToken);
-		return createAccessToken((String)claims.get("sub"), (String)claims.get("auth"));
 	}
 
 	public Authentication getAuthentication(String accessToken) {
@@ -119,23 +113,16 @@ public class JwtTokenProvider {
 		}
 	}
 
-	public void validateRefreshToken(String oldAccessToken, String newAccessToken) {
-		String refreshToken = refreshTokenRepository.findByAccessToken(oldAccessToken)
-			.orElseThrow(() -> new ExpiredJwtException(null, null, ""))
+	public String validateRefreshToken(String accessToken) {
+		String refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
+			.orElseThrow(() -> new ExpiredJwtException(null, null, "데이터가 없음"))
 			.getRefreshToken();
-
-		Claims claims = parseClaims(newAccessToken);
-		refreshTokenRepository.save(RefreshToken.builder()
-			.email((String)claims.get("sub"))
-			.accessToken(newAccessToken)
-			.refreshToken(refreshToken)
-			.build());
-
 		try {
 			Jwts.parserBuilder()
 				.setSigningKey(key)
 				.build()
 				.parseClaimsJws(refreshToken);
+			return refreshToken;
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token", e);
 		} catch (UnsupportedJwtException e) {
@@ -143,6 +130,20 @@ public class JwtTokenProvider {
 		} catch (IllegalArgumentException e) {
 			log.info("JWT claims string is empty.", e);
 		}
+		return null;
+	}
+
+	public String reissuanceAccessToken(String accessToken, String refreshToken) {
+		Claims claims = parseClaims(accessToken);
+		String newAccessToken = createAccessToken((String)claims.get("sub"), (String)claims.get("auth"));
+
+		refreshTokenRepository.save(RefreshToken.builder()
+			.email((String)claims.get("sub"))
+			.accessToken(newAccessToken)
+			.refreshToken(refreshToken)
+			.build());
+
+		return newAccessToken;
 	}
 
 	private Claims parseClaims(String accessToken) {
@@ -162,7 +163,7 @@ public class JwtTokenProvider {
 		Cookie cookie = new Cookie("Authorization",
 			URLEncoder.encode("Bearer " + accessToken, "utf-8").replaceAll("\\+", "%20"));
 		cookie.setPath("/");
-		cookie.setMaxAge(60 * 60);  // 쿠키 유효 시간 : 1시간
+		cookie.setMaxAge(604800);  // 쿠키 유효 시간 : 1시간
 		httpServletResponse.addCookie(cookie);
 	}
 }
