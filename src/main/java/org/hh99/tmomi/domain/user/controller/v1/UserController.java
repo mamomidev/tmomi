@@ -1,4 +1,4 @@
-package org.hh99.tmomi.domain.user.controller;
+package org.hh99.tmomi.domain.user.controller.v1;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class UserController {
 
 	private final UserService userService;

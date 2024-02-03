@@ -1,4 +1,4 @@
-package org.hh99.tmomi.domain.ticket.controller;
+package org.hh99.tmomi.domain.ticket.controller.v1;
 
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class TicketController {
 
 	private final TicketService ticketService;
