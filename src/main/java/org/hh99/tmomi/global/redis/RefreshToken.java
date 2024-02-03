@@ -13,10 +13,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(value = "refreshToken", timeToLive = 1209600)
+@RedisHash(value = "refreshToken", timeToLive = 3)
 public class RefreshToken {
 
 	@Id
+	private String email;
 	@Indexed
 	private String accessToken;
 	private String refreshToken;
