@@ -6,31 +6,27 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private static final String[] WHITELIST = {
-			"/api/v1/signin", // 로그인
-			"/api/v1/signup"  // 회원가입
+		"/api/v1/signin", // 로그인
+		"/api/v1/signup"  // 회원가입
 	};
 	private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -48,10 +44,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		String token = resolveToken(request);
 		try {
 			jwtTokenProvider.validateToken(token);
-
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
-		} catch (ExpiredJwtException e) {	// 토큰 만료시
+
+		} catch (ExpiredJwtException e) {    // 토큰 만료시
 			try {
 				jwtTokenProvider.validateRefreshToken(token);
 
@@ -63,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 				// 쿠키에 넣기
 				Cookie cookie = new Cookie("Authorization",
-						URLEncoder.encode("Bearer " + jwtToken.getAccessToken(), "utf-8").replaceAll("\\+", "%20"));
+					URLEncoder.encode("Bearer " + jwtToken.getAccessToken(), "utf-8").replaceAll("\\+", "%20"));
 				cookie.setPath("/");
 				cookie.setMaxAge(60 * 60);  // 쿠키 유효 시간 : 1시간
 				response.addCookie(cookie);
@@ -79,7 +75,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private String resolveToken(HttpServletRequest request) {
 
 		Cookie[] cookies = request.getCookies();
-		if (cookies == null) return null;
+		if (cookies == null) {
+			return null;
+		}
 
 		for (Cookie cookie : cookies) {
 			if (cookie.getName().equals("Authorization")) {
@@ -94,6 +92,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				}
 			}
 		}
-        return null;
-    }
+		return null;
+	}
 }

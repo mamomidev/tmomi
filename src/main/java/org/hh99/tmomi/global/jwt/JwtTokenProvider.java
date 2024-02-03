@@ -71,7 +71,7 @@ public class JwtTokenProvider {
 			.setSubject(email)
 			.claim("auth", auth)
 			// .setExpiration(new Date((new Date()).getTime() + 86400000))
-			.setExpiration(new Date((new Date()).getTime() + 5000))
+			.setExpiration(new Date((new Date()).getTime() + 43200000))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
