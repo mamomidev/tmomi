@@ -119,10 +119,17 @@ public class JwtTokenProvider {
 		}
 	}
 
-	public void validateRefreshToken(String accessToken) {
-		String refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
+	public void validateRefreshToken(String oldAccessToken, String newAccessToken) {
+		String refreshToken = refreshTokenRepository.findByAccessToken(oldAccessToken)
 			.orElseThrow(() -> new ExpiredJwtException(null, null, ""))
 			.getRefreshToken();
+
+		Claims claims = parseClaims(newAccessToken);
+		refreshTokenRepository.save(RefreshToken.builder()
+			.email((String)claims.get("sub"))
+			.accessToken(newAccessToken)
+			.refreshToken(refreshToken)
+			.build());
 
 		try {
 			Jwts.parserBuilder()

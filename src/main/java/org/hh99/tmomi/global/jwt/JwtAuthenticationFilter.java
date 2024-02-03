@@ -3,7 +3,6 @@ package org.hh99.tmomi.global.jwt;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Arrays;
 
 import org.springframework.security.core.Authentication;
@@ -48,25 +47,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		} catch (ExpiredJwtException e) {    // 토큰 만료시
-			try {
-				jwtTokenProvider.validateRefreshToken(token);
+			String newAccessToken = jwtTokenProvider.createNewAccessToken(token);
+			jwtTokenProvider.validateRefreshToken(token, newAccessToken);
 
-				String newAccessToken = jwtTokenProvider.createNewAccessToken(token);
-				jwtTokenProvider.validateToken(newAccessToken);
-				Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
-				SecurityContextHolder.getContext().setAuthentication(authentication);
+			Authentication authentication = jwtTokenProvider.getAuthentication(newAccessToken);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 
-				JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
-				// 쿠키에 넣기
-				Cookie cookie = new Cookie("Authorization",
-					URLEncoder.encode("Bearer " + jwtToken.getAccessToken(), "utf-8").replaceAll("\\+", "%20"));
-				cookie.setPath("/");
-				cookie.setMaxAge(60 * 60);  // 쿠키 유효 시간 : 1시간
-				response.addCookie(cookie);
-
-			} catch (ExpiredJwtException ex) { // refresh 토큰 만료시
-				response.getWriter().write("로그인이 만료되었습니다.");
-			}
+			jwtTokenProvider.createCookieAccessToken(newAccessToken, response);
 		}
 
 		chain.doFilter(request, response);
