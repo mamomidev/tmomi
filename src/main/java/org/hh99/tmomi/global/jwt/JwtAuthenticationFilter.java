@@ -15,6 +15,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -28,10 +29,14 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		ServletException {
 
 		String token = resolveToken((HttpServletRequest)request);
+		System.out.println("before:" + token);
 
 		if (token != null && !jwtTokenProvider.validateToken(token)) {
 			token = jwtTokenProvider.validateRefreshToken(token);
+			jwtTokenProvider.createCookieAccessToken(token, (HttpServletResponse)response);
 		}
+
+		System.out.println("after:" + token);
 
 		if (token != null && jwtTokenProvider.validateToken(token)) {
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);

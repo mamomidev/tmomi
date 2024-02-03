@@ -1,5 +1,7 @@
 package org.hh99.tmomi.global.jwt;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +27,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -66,7 +70,7 @@ public class JwtTokenProvider {
 			.setSubject(email)
 			.claim("auth", auth)
 			// .setExpiration(new Date((new Date()).getTime() + 86400000))
-			.setExpiration(new Date((new Date()).getTime() + 5))
+			.setExpiration(new Date((new Date()).getTime() + 5000))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
@@ -104,6 +108,7 @@ public class JwtTokenProvider {
 			log.info("Invalid JWT Token", e);
 		} catch (ExpiredJwtException e) {
 			log.info("Expired JWT Token", e);
+			return false;
 		} catch (UnsupportedJwtException e) {
 			log.info("Unsupported JWT Token", e);
 		} catch (IllegalArgumentException e) {
@@ -148,4 +153,12 @@ public class JwtTokenProvider {
 		}
 	}
 
+	public void createCookieAccessToken(String accessToken, HttpServletResponse httpServletResponse) throws
+		UnsupportedEncodingException {
+		Cookie cookie = new Cookie("Authorization",
+			URLEncoder.encode("Bearer " + accessToken, "utf-8").replaceAll("\\+", "%20"));
+		cookie.setPath("/");
+		cookie.setMaxAge(60 * 60);  // 쿠키 유효 시간 : 1시간
+		httpServletResponse.addCookie(cookie);
+	}
 }
