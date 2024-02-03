@@ -36,9 +36,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		chain.doFilter(request, response);
 	}
 
-	private String resolveToken(HttpServletRequest req) {
+	private String resolveToken(HttpServletRequest request) {
 
-		Cookie[] cookies = req.getCookies();
+		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals("Authorization")) {
