@@ -39,6 +39,8 @@ public class StageService {
 	}
 
 	public StageResponseDto createStage(StageRequestDto stageRequestDto) {
+		Stage stage = new Stage(stageRequestDto);
+		stageRepository.save(stage);
 		return new StageResponseDto(new Stage(stageRequestDto));
 	}
 

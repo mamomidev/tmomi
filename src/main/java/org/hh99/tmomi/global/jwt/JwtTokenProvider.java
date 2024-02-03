@@ -66,7 +66,7 @@ public class JwtTokenProvider {
 			.setSubject(email)
 			.claim("auth", auth)
 			// .setExpiration(new Date((new Date()).getTime() + 86400000))
-			.setExpiration(new Date((new Date()).getTime() + 5))
+			.setExpiration(new Date((new Date()).getTime() + 5000))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
@@ -106,8 +106,6 @@ public class JwtTokenProvider {
 				.parseClaimsJws(token);
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token", e);
-		} catch (ExpiredJwtException e) {
-			log.info("Expired JWT AccessToken", e);
 		} catch (UnsupportedJwtException e) {
 			log.info("Unsupported JWT Token", e);
 		} catch (IllegalArgumentException e) {
@@ -127,8 +125,6 @@ public class JwtTokenProvider {
 				.parseClaimsJws(refreshToken);
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token", e);
-		} catch (ExpiredJwtException e) {
-			log.info("Expired JWT Token", e);
 		} catch (UnsupportedJwtException e) {
 			log.info("Unsupported JWT Token", e);
 		} catch (IllegalArgumentException e) {

@@ -49,7 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			jwtTokenProvider.validateToken(token);
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
-			// 쿠키에 넣어주기
 		} catch (ExpiredJwtException e) {	// 토큰 만료시
 			try {
 				jwtTokenProvider.validateRefreshToken(token);
