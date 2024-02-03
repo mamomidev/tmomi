@@ -47,7 +47,7 @@ public class JwtTokenProvider {
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.joining(","));
 
-		String accessToken = createAccessToken(authentication, authorities);
+		String accessToken = createAccessToken(authentication.getName(), authorities);
 		String refreshToken = createRefreshToken();
 
 		refreshTokenRepository.save(RefreshToken.builder()
@@ -61,13 +61,11 @@ public class JwtTokenProvider {
 			.build();
 	}
 
-	public String createAccessToken(Authentication authentication, String authorities) {
-		long now = (new Date()).getTime();
-		Date accessTokenExpiresln = new Date(now + 86400000);
+	public String createAccessToken(String email, String auth) {
 		return Jwts.builder()
-			.setSubject(authentication.getName())
-			.claim("auth", authorities)
-			.setExpiration(accessTokenExpiresln)
+			.setSubject(email)
+			.claim("auth", auth)
+			.setExpiration(new Date((new Date()).getTime() + 86400000))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
@@ -104,13 +102,35 @@ public class JwtTokenProvider {
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token", e);
 		} catch (ExpiredJwtException e) {
-			log.info("Expired JWT Token", e);
+			if (!validateRefreshToken(token)) {
+				log.info("Expired JWT Token", e);
+			}
 		} catch (UnsupportedJwtException e) {
 			log.info("Unsupported JWT Token", e);
 		} catch (IllegalArgumentException e) {
 			log.info("JWT claims string is empty.", e);
 		}
 		return false;
+	}
+
+	private boolean validateRefreshToken(String accessToken) {
+		String refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
+			.orElseThrow(() -> new ExpiredJwtException(null, null, ""))
+			.getRefreshToken();
+
+		try {
+			Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(refreshToken);
+
+			Claims claims = parseClaims(accessToken);
+			accessToken = createAccessToken((String)claims.get("sub"), (String)claims.get("auth"));
+
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	private Claims parseClaims(String accessToken) {

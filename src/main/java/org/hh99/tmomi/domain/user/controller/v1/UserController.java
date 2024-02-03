@@ -33,6 +33,7 @@ public class UserController {
 	public ResponseEntity signIn(HttpServletResponse httpServletResponse,
 		@RequestBody UserRequestDto userRequestDto) throws UnsupportedEncodingException {
 		JwtToken jwtToken = userService.signIn(userRequestDto);
+
 		Cookie cookie = new Cookie("Authorization",
 			URLEncoder.encode("Bearer " + jwtToken.getAccessToken(), "utf-8").replaceAll("\\+", "%20"));
 		cookie.setPath("/");

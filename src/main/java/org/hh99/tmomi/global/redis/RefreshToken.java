@@ -2,6 +2,7 @@ package org.hh99.tmomi.global.redis;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class RefreshToken {
 
 	@Id
+	@Indexed
 	private String accessToken;
 	private String refreshToken;
 }
