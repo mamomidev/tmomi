@@ -43,7 +43,7 @@ public class UserService implements UserDetailsService {
 			.map(user -> org.springframework.security.core.userdetails.User.builder()
 				.username(user.getEmail())
 				.password(user.getPassword())
-				.roles(user.getAuthorities().toString())
+				.roles(user.getAuthor().getAuthority())
 				.build())
 			.orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
 	}
