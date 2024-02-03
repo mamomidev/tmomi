@@ -14,6 +14,16 @@ public class EventResponseDto {
 	private final LocalDate eventEndDate;
 	private final String eventImage;
 	private final String eventDescription;
+	private final String stageAddress;
+
+	public EventResponseDto(Event event, String stageAddress) {
+		this.eventName = event.getEventName();
+		this.eventStartDate = event.getEventStartDate();
+		this.eventEndDate = event.getEventEndDate();
+		this.eventImage = event.getEventImage();
+		this.eventDescription = event.getEventDescription();
+		this.stageAddress = stageAddress;
+	}
 
 	public EventResponseDto(Event event) {
 		this.eventName = event.getEventName();
@@ -21,5 +31,6 @@ public class EventResponseDto {
 		this.eventEndDate = event.getEventEndDate();
 		this.eventImage = event.getEventImage();
 		this.eventDescription = event.getEventDescription();
+		this.stageAddress = event.getStage().getAddress();
 	}
 }

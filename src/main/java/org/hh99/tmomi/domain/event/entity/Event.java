@@ -2,16 +2,12 @@ package org.hh99.tmomi.domain.event.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.*;
 import org.hh99.tmomi.domain.event.dto.event.EventRequestDto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hh99.tmomi.domain.stage.entity.Stage;
 
 @Entity
 @Getter
@@ -38,19 +34,25 @@ public class Event {
 	@Column
 	private String eventDescription;
 
-	public Event(EventRequestDto eventRequestDto) {
+	@JoinColumn(name = "stage_id")
+	@ManyToOne
+	private Stage stage;
+
+	public Event(EventRequestDto eventRequestDto, Stage stage) {
 		this.eventName = eventRequestDto.getEventName();
 		this.eventStartDate = eventRequestDto.getEventStartDate();
 		this.eventEndDate = eventRequestDto.getEventEndDate();
 		this.eventImage = eventRequestDto.getEventImage();
 		this.eventDescription = eventRequestDto.getEventDescription();
+		this.stage = stage;
 	}
 
-	public void update(EventRequestDto eventRequestDto) {
+	public void update(EventRequestDto eventRequestDto, Stage stage) {
 		this.eventName = eventRequestDto.getEventName();
 		this.eventStartDate = eventRequestDto.getEventStartDate();
 		this.eventEndDate = eventRequestDto.getEventEndDate();
 		this.eventImage = eventRequestDto.getEventImage();
 		this.eventDescription = eventRequestDto.getEventDescription();
+		this.stage = stage;
 	}
 }
