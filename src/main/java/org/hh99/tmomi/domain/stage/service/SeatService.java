@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.hh99.tmomi.domain.stage.dto.seat.SeatRequestDto;
 import org.hh99.tmomi.domain.stage.dto.seat.SeatResponseDto;
+import org.hh99.tmomi.domain.stage.dto.seat.SeatStageListResponseDto;
 import org.hh99.tmomi.domain.stage.entity.Seat;
 import org.hh99.tmomi.domain.stage.entity.Stage;
 import org.hh99.tmomi.domain.stage.repository.SeatRepository;
@@ -22,10 +23,10 @@ public class SeatService {
 	private final StageRepository stageRepository;
 	private final SeatRepository seatRepository;
 
-	public List<SeatResponseDto> getSeatListByStageId(Long stageId) {
+	public List<SeatStageListResponseDto> getSeatListByStageId(Long stageId) {
 		return seatRepository.findByStageId(stageId)
 			.stream()
-			.map(SeatResponseDto::new)
+			.map(SeatStageListResponseDto::new)
 			.collect(Collectors.toList());
 	}
 

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.hh99.tmomi.domain.stage.dto.rank.RankRequestDto;
 import org.hh99.tmomi.domain.stage.dto.rank.RankResponseDto;
+import org.hh99.tmomi.domain.stage.dto.rank.RankStageListResponseDto;
 import org.hh99.tmomi.domain.stage.entity.Rank;
 import org.hh99.tmomi.domain.stage.entity.Seat;
 import org.hh99.tmomi.domain.stage.repository.RankRepository;
@@ -22,10 +23,10 @@ public class RankService {
 	private final RankRepository rankRepository;
 	private final SeatRepository seatRepository;
 
-	public List<RankResponseDto> getRankListByStageId(Long stageId) {
+	public List<RankStageListResponseDto> getRankListByStageId(Long stageId) {
 		return rankRepository.findByStageId(stageId)
 			.stream()
-			.map(RankResponseDto::new)
+			.map(RankStageListResponseDto::new)
 			.collect(Collectors.toList());
 	}
 

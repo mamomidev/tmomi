@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hh99.tmomi.domain.stage.dto.seat.SeatRequestDto;
 import org.hh99.tmomi.domain.stage.dto.seat.SeatResponseDto;
+import org.hh99.tmomi.domain.stage.dto.seat.SeatStageListResponseDto;
 import org.hh99.tmomi.domain.stage.service.SeatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class SeatController {
 	private final SeatService seatService;
 
 	@GetMapping("/stages/{stageId}/seats")
-	public ResponseEntity<List<SeatResponseDto>> getSeatListByStageId(@PathVariable Long stageId) {
+	public ResponseEntity<List<SeatStageListResponseDto>> getSeatListByStageId(@PathVariable Long stageId) {
 		return ResponseEntity.ok(seatService.getSeatListByStageId(stageId));
 	}
 
