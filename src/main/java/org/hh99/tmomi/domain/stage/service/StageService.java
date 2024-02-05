@@ -23,7 +23,7 @@ public class StageService {
 	private final RefreshTokenRepository refreshTokenRepository;
 
 	public List<StageResponseDto> getStageListByAddress(StageRequestDto stageRequestDto) {
-		List<StageResponseDto> stageList = stageRepository.findByAddressLike("%" + stageRequestDto.getAddress() + "%")
+		List<StageResponseDto> stageList = stageRepository.findByAddressContaining(stageRequestDto.getAddress())
 			.stream()
 			.map(StageResponseDto::new)
 			.collect(Collectors.toList());
