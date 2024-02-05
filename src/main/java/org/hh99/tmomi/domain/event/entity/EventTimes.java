@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "event_times")
+@Table(name = "eventTimes")
 public class EventTimes {
 
 	@Id

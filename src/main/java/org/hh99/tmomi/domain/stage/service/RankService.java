@@ -12,6 +12,7 @@ import org.hh99.tmomi.domain.stage.repository.SeatRepository;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -35,6 +36,7 @@ public class RankService {
 		return new RankResponseDto(rankRepository.save(new Rank(rankRequestDto, seat, seat.getStage())));
 	}
 
+	@Transactional
 	public RankResponseDto updateRank(Long rankId, RankRequestDto rankRequestDto) {
 		Seat seat = seatRepository.findById(rankRequestDto.getSeatId())
 			.orElseThrow(() -> new EntityNotFoundException());
@@ -44,6 +46,7 @@ public class RankService {
 		return new RankResponseDto(rank);
 	}
 
+	@Transactional
 	public RankResponseDto deleteRank(Long rankId) {
 		Rank rank = rankRepository.findById(rankId).orElseThrow(() -> new EntityNotFoundException());
 		rankRepository.deleteById(rankId);

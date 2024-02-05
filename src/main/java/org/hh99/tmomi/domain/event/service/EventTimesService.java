@@ -9,6 +9,7 @@ import org.hh99.tmomi.domain.event.repository.EventTimesRepository;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,10 +23,11 @@ public class EventTimesService {
 		Event event = eventRepository.findById(eventId)
 			.orElseThrow(() -> new EntityNotFoundException(""));
 		EventTimes eventTimes = new EventTimes(eventTimesRequestDto, event);
-
+		eventTimesRepository.save(eventTimes);
 		return new EventTimesResponseDto(eventTimes);
 	}
 
+	@Transactional
 	public EventTimesResponseDto updateEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventTimeId) {
 		EventTimes eventTimes = eventTimesRepository.findById(eventTimeId)
 			.orElseThrow(() -> new EntityNotFoundException(""));
@@ -34,6 +36,7 @@ public class EventTimesService {
 		return new EventTimesResponseDto(eventTimes);
 	}
 
+	@Transactional
 	public EventTimesResponseDto deleteEventTimes(Long eventTimeId) {
 		EventTimes eventTimes = eventTimesRepository.findById(eventTimeId)
 			.orElseThrow(() -> new EntityNotFoundException(""));
