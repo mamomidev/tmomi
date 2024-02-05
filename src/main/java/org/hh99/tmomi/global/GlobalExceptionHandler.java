@@ -29,4 +29,5 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionCodeDto> handleGlobalException(GlobalException ex) {
 		return ExceptionCodeDto.toResponseEntity(ex);
 	}
+
 }
