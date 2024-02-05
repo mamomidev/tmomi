@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionCodeDto> handleGlobalException(GlobalException ex) {
 		return ResponseEntity.status(ex.getHttpStatus())
 			.body(ExceptionCodeDto.builder()
-				.code(ex.getExceptionCode().toString())
+				.code(ex.getExceptionCode().name())
 				.message(ex.getExceptionCode().getMessage())
 				.build());
 	}
