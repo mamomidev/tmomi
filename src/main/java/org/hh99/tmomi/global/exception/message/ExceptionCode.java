@@ -1,4 +1,4 @@
-package org.hh99.tmomi.global.message;
+package org.hh99.tmomi.global.exception.message;
 
 import lombok.Getter;
 

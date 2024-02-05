@@ -1,4 +1,4 @@
-package org.hh99.tmomi.global.message.dto;
+package org.hh99.tmomi.global.exception.message.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

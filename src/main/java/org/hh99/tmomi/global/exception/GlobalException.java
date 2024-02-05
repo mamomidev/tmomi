@@ -1,6 +1,6 @@
 package org.hh99.tmomi.global.exception;
 
-import org.hh99.tmomi.global.message.ExceptionCode;
+import org.hh99.tmomi.global.exception.message.ExceptionCode;
 import org.springframework.http.HttpStatus;
 
 import lombok.AllArgsConstructor;

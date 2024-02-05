@@ -1,7 +1,6 @@
-package org.hh99.tmomi.global;
+package org.hh99.tmomi.global.exception;
 
-import org.hh99.tmomi.global.exception.GlobalException;
-import org.hh99.tmomi.global.message.dto.ExceptionCodeDto;
+import org.hh99.tmomi.global.exception.message.dto.ExceptionCodeDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
