@@ -9,7 +9,6 @@ import org.hh99.tmomi.domain.stage.entity.Stage;
 import org.hh99.tmomi.domain.stage.repository.StageRepository;
 import org.hh99.tmomi.global.exception.GlobalException;
 import org.hh99.tmomi.global.message.ExceptionCode;
-import org.hh99.tmomi.global.redis.RefreshTokenRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class StageService {
 
 	private final StageRepository stageRepository;
-	private final RefreshTokenRepository refreshTokenRepository;
 
 	public List<StageResponseDto> getStageListByAddress(StageRequestDto stageRequestDto) {
 		List<StageResponseDto> stageList = stageRepository.findByAddressContaining(stageRequestDto.getAddress())
