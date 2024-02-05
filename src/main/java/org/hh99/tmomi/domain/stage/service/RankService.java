@@ -32,9 +32,10 @@ public class RankService {
 			.collect(Collectors.toList());
 	}
 
+	@Transactional
 	public RankResponseDto createRank(RankRequestDto rankRequestDto) {
 		Seat seat = seatRepository.findById(rankRequestDto.getSeatId())
-			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RANK));
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_SEAT));
 
 		return new RankResponseDto(rankRepository.save(new Rank(rankRequestDto, seat, seat.getStage())));
 	}

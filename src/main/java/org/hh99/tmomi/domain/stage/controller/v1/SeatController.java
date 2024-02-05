@@ -6,7 +6,6 @@ import org.hh99.tmomi.domain.stage.dto.seat.SeatRequestDto;
 import org.hh99.tmomi.domain.stage.dto.seat.SeatResponseDto;
 import org.hh99.tmomi.domain.stage.dto.seat.SeatStageListResponseDto;
 import org.hh99.tmomi.domain.stage.service.SeatService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,14 +36,13 @@ public class SeatController {
 	}
 
 	@PutMapping("/seats/{seatId}")
-	public ResponseEntity updateSeat(@PathVariable Long seatId, @RequestBody SeatRequestDto seatRequestDto) {
-		seatService.updateSeat(seatId, seatRequestDto);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<SeatResponseDto> updateSeat(@PathVariable Long seatId,
+		@RequestBody SeatRequestDto seatRequestDto) {
+		return ResponseEntity.ok(seatService.updateSeat(seatId, seatRequestDto));
 	}
 
 	@DeleteMapping("/seats/{seatId}")
-	public ResponseEntity deleteSeat(@PathVariable Long seatId) {
-		seatService.deleteSeat(seatId);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	public ResponseEntity<SeatResponseDto> deleteSeat(@PathVariable Long seatId) {
+		return ResponseEntity.ok(seatService.deleteSeat(seatId));
 	}
 }

@@ -36,8 +36,8 @@ public class StageService {
 	}
 
 	public StageResponseDto getStage(Long stageId) {
-		return new StageResponseDto(stageRepository.findById(stageId).orElseThrow(() -> new GlobalException(
-			HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_TICKET)));
+		return new StageResponseDto(stageRepository.findById(stageId)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_STAGE)));
 	}
 
 	@Transactional

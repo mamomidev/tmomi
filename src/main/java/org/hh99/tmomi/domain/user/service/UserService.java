@@ -5,8 +5,11 @@ import org.hh99.tmomi.domain.user.dto.UserRequestDto;
 import org.hh99.tmomi.domain.user.dto.UserResponseDto;
 import org.hh99.tmomi.domain.user.entity.User;
 import org.hh99.tmomi.domain.user.repository.UserRepository;
+import org.hh99.tmomi.global.exception.GlobalException;
+import org.hh99.tmomi.global.exception.message.ExceptionCode;
 import org.hh99.tmomi.global.jwt.JwtToken;
 import org.hh99.tmomi.global.jwt.JwtTokenProvider;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -51,7 +54,7 @@ public class UserService implements UserDetailsService {
 	@Transactional
 	public UserResponseDto signUp(UserRequestDto userRequestDto) {
 		if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
-			throw new IllegalArgumentException();
+			throw new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER);
 		}
 		userRequestDto.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
 		userRequestDto.setAuthor(UserAuthEnum.USER);
