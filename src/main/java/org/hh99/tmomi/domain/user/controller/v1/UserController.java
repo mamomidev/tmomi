@@ -30,7 +30,7 @@ public class UserController {
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity signIn(HttpServletResponse httpServletResponse,
+	public ResponseEntity<UserResponseDto> signIn(HttpServletResponse httpServletResponse,
 		@RequestBody UserRequestDto userRequestDto) throws UnsupportedEncodingException {
 		JwtToken jwtToken = userService.signIn(userRequestDto);
 		jwtTokenProvider.createCookieAccessToken(jwtToken.getAccessToken(), httpServletResponse);

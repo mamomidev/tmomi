@@ -8,10 +8,12 @@ import org.hh99.tmomi.domain.event.entity.Event;
 import org.hh99.tmomi.domain.event.repository.EventRepository;
 import org.hh99.tmomi.domain.stage.entity.Stage;
 import org.hh99.tmomi.domain.stage.repository.StageRepository;
+import org.hh99.tmomi.global.exception.GlobalException;
+import org.hh99.tmomi.global.exception.message.ExceptionCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,9 +23,10 @@ public class EventService {
 	private final EventRepository eventRepository;
 	private final StageRepository stageRepository;
 
+	@Transactional
 	public EventResponseDto createEvent(EventRequestDto eventRequestDto) {
 		Stage stage = stageRepository.findById(eventRequestDto.getStageId())
-			.orElseThrow(() -> new EntityNotFoundException(""));
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_STAGE));
 		Event event = new Event(eventRequestDto, stage);
 		eventRepository.save(event);
 
@@ -32,26 +35,30 @@ public class EventService {
 
 	@Transactional
 	public EventResponseDto updateEvent(EventRequestDto eventRequestDto, Long eventId) {
-		Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(""));
+		Event event = eventRepository.findById(eventId)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
 		Stage stage = stageRepository.findById(eventRequestDto.getStageId())
-			.orElseThrow(() -> new EntityNotFoundException(""));
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_STAGE));
 
 		event.update(eventRequestDto, stage);
 
 		return new EventResponseDto(event, stage.getAddress());
 	}
 
+	@Transactional
 	public EventResponseDto deleteEvent(Long eventId) {
-		Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(""));
+		Event event = eventRepository.findById(eventId)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
 		eventRepository.delete(event);
 
 		return new EventResponseDto(event);
 	}
 
 	public EventResponseDto getEvent(Long eventId) {
-		Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(""));
+		Event event = eventRepository.findById(eventId)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
 		Stage stage = stageRepository.findById(event.getStage().getId())
-			.orElseThrow(() -> new EntityNotFoundException(""));
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_STAGE));
 
 		return new EventResponseDto(event, stage.getAddress());
 	}

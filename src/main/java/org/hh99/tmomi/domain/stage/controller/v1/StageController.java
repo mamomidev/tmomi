@@ -5,7 +5,6 @@ import java.util.List;
 import org.hh99.tmomi.domain.stage.dto.stage.StageRequestDto;
 import org.hh99.tmomi.domain.stage.dto.stage.StageResponseDto;
 import org.hh99.tmomi.domain.stage.service.StageService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,20 +35,18 @@ public class StageController {
 	}
 
 	@PostMapping("/stages")
-	public ResponseEntity createStage(@RequestBody StageRequestDto stageRequestDto) {
-		stageService.createStage(stageRequestDto);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	public ResponseEntity<StageResponseDto> createStage(@RequestBody StageRequestDto stageRequestDto) {
+		return ResponseEntity.ok(stageService.createStage(stageRequestDto));
 	}
 
 	@PutMapping("/stages/{stageId}")
-	public ResponseEntity updateStage(@PathVariable Long stageId, @RequestBody StageRequestDto stageRequestDto) {
-		stageService.updateStage(stageId, stageRequestDto);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<StageResponseDto> updateStage(@PathVariable Long stageId,
+		@RequestBody StageRequestDto stageRequestDto) {
+		return ResponseEntity.ok(stageService.updateStage(stageId, stageRequestDto));
 	}
 
 	@DeleteMapping("/stages/{stageId}")
-	public ResponseEntity deleteStage(@PathVariable Long stageId) {
-		stageService.deleteStage(stageId);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	public ResponseEntity<StageResponseDto> deleteStage(@PathVariable Long stageId) {
+		return ResponseEntity.ok(stageService.deleteStage(stageId));
 	}
 }
