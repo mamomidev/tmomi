@@ -37,7 +37,7 @@ public class StageController {
 
 	@PostMapping("/stages")
 	public ResponseEntity createStage(@RequestBody StageRequestDto stageRequestDto) {
-			stageService.createStage(stageRequestDto);
+		stageService.createStage(stageRequestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 

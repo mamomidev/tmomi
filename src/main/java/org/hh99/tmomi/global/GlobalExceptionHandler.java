@@ -1,5 +1,7 @@
 package org.hh99.tmomi.global;
 
+import org.hh99.tmomi.global.exception.GlobalException;
+import org.hh99.tmomi.global.message.dto.ExceptionCodeDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,4 +24,10 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity handleMethodEntityExistsException(EntityExistsException ex) {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
+
+	@ExceptionHandler(GlobalException.class)
+	public ResponseEntity<ExceptionCodeDto> handleGlobalException(GlobalException ex) {
+		return new ExceptionCodeDto().toResponseEntity(ex);
+	}
+
 }
