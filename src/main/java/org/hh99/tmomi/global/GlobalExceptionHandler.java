@@ -22,4 +22,5 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity handleMethodEntityExistsException(EntityExistsException ex) {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
+
 }

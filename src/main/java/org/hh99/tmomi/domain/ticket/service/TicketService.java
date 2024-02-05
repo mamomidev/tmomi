@@ -38,6 +38,7 @@ public class TicketService {
 			.orElseThrow(() -> new EntityNotFoundException());
 		Seat seat = seatRepository.findById(ticketRequestDto.getSeatId())
 			.orElseThrow(() -> new EntityNotFoundException());
+
 		Ticket ticket = new Ticket(ticketRequestDto, user, event, eventTimes, seat);
 
 		return new TicketResponseDto(ticketRepository.save(ticket));
