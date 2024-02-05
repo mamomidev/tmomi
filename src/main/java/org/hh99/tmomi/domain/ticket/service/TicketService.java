@@ -44,9 +44,9 @@ public class TicketService {
 	}
 
 	@Transactional
-	public TicketResponseDto updateTicket(Long ticketId, TicketRequestDto ticketRequestDto) {
+	public TicketResponseDto updateTicket(Long ticketId) {
 		Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new EntityNotFoundException());
-		ticket.update(ticketRequestDto);
+		ticket.refund();
 
 		return new TicketResponseDto(ticket);
 	}
