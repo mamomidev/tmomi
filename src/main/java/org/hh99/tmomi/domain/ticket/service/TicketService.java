@@ -12,10 +12,12 @@ import org.hh99.tmomi.domain.ticket.entity.Ticket;
 import org.hh99.tmomi.domain.ticket.repository.TicketRepository;
 import org.hh99.tmomi.domain.user.entity.User;
 import org.hh99.tmomi.domain.user.repository.UserRepository;
+import org.hh99.tmomi.global.exception.GlobalException;
+import org.hh99.tmomi.global.exception.message.ExceptionCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -31,13 +33,13 @@ public class TicketService {
 	@Transactional
 	public TicketResponseDto createTicket(TicketRequestDto ticketRequestDto) {
 		User user = userRepository.findById(ticketRequestDto.getUserId())
-			.orElseThrow(() -> new EntityNotFoundException());
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER));
 		Event event = eventRepository.findById(ticketRequestDto.getEventId())
-			.orElseThrow(() -> new EntityNotFoundException());
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
 		EventTimes eventTimes = eventTimesRepository.findById(ticketRequestDto.getEventTimesId())
-			.orElseThrow(() -> new EntityNotFoundException());
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT_TIME));
 		Seat seat = seatRepository.findById(ticketRequestDto.getSeatId())
-			.orElseThrow(() -> new EntityNotFoundException());
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_SEAT));
 
 		Ticket ticket = new Ticket(ticketRequestDto, user, event, eventTimes, seat);
 
@@ -46,7 +48,8 @@ public class TicketService {
 
 	@Transactional
 	public TicketResponseDto updateTicketRefund(Long ticketId) {
-		Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new EntityNotFoundException());
+		Ticket ticket = ticketRepository.findById(ticketId)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_TICKET));
 		ticket.refund();
 
 		return new TicketResponseDto(ticket);
