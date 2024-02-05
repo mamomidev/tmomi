@@ -163,7 +163,7 @@ public class JwtTokenProvider {
 		Cookie cookie = new Cookie("Authorization",
 			URLEncoder.encode("Bearer " + accessToken, "utf-8").replaceAll("\\+", "%20"));
 		cookie.setPath("/");
-		cookie.setMaxAge(604800);  // 쿠키 유효 시간 : 1시간
+		cookie.setMaxAge(604800);  // 쿠키 유효 시간 : 일주일
 		httpServletResponse.addCookie(cookie);
 	}
 }
