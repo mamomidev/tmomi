@@ -41,10 +41,10 @@ public class StageService {
 			HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_TICKET)));
 	}
 
+	@Transactional
 	public StageResponseDto createStage(StageRequestDto stageRequestDto) {
 		Stage stage = new Stage(stageRequestDto);
-		stageRepository.save(stage);
-		return new StageResponseDto(new Stage(stageRequestDto));
+		return new StageResponseDto(stageRepository.save(stage));
 	}
 
 	@Transactional
