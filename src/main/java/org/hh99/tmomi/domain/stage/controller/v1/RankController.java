@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hh99.tmomi.domain.stage.dto.rank.RankRequestDto;
 import org.hh99.tmomi.domain.stage.dto.rank.RankResponseDto;
+import org.hh99.tmomi.domain.stage.dto.rank.RankStageListResponseDto;
 import org.hh99.tmomi.domain.stage.service.RankService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class RankController {
 	private final RankService rankService;
 
 	@GetMapping("/stages/{stageId}/ranks")
-	public ResponseEntity<List<RankResponseDto>> getRankListByStageId(@PathVariable Long stageId) {
+	public ResponseEntity<List<RankStageListResponseDto>> getRankListByStageId(@PathVariable Long stageId) {
 		return ResponseEntity.ok(rankService.getRankListByStageId(stageId));
 	}
 

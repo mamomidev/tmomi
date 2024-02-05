@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,7 +23,7 @@ public class StageService {
 	private final RefreshTokenRepository refreshTokenRepository;
 
 	public List<StageResponseDto> getStageListByAddress(StageRequestDto stageRequestDto) {
-		List<StageResponseDto> stageList = stageRepository.findByAddress(stageRequestDto.getAddress())
+		List<StageResponseDto> stageList = stageRepository.findByAddressContaining(stageRequestDto.getAddress())
 			.stream()
 			.map(StageResponseDto::new)
 			.collect(Collectors.toList());
@@ -44,6 +45,7 @@ public class StageService {
 		return new StageResponseDto(new Stage(stageRequestDto));
 	}
 
+	@Transactional
 	public StageResponseDto updateStage(Long stageId, StageRequestDto stageRequestDto) {
 		Stage stage = stageRepository.findById(stageId).orElseThrow(() -> new EntityNotFoundException());
 		stage.updateAddress(stageRequestDto);
@@ -51,6 +53,7 @@ public class StageService {
 		return new StageResponseDto(stage);
 	}
 
+	@Transactional
 	public StageResponseDto deleteStage(Long stageId) {
 		Stage stage = stageRepository.findById(stageId).orElseThrow(() -> new EntityNotFoundException());
 		stageRepository.deleteById(stageId);

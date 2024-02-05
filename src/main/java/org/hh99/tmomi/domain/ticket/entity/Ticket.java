@@ -65,7 +65,7 @@ public class Ticket implements Serializable {
 		this.seatNumber = ticketRequestDto.getSeatNumber();
 	}
 
-	public void update(TicketRequestDto ticketRequestDto) {
-		this.ticketStatus = ticketRequestDto.getTicketStatus();
+	public void refund() {
+		this.ticketStatus = TicketStatus.REFUND;
 	}
 }

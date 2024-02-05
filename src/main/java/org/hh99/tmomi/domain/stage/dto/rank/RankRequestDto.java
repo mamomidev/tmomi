@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class RankRequestDto {
-	private Long id;
+	private Long stageId;
 	private Long seatId;
 	private String rankName;
 	private Integer price;

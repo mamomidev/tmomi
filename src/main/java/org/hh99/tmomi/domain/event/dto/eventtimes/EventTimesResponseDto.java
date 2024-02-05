@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 public class EventTimesResponseDto {
-	private long eventId;
+	// private long eventId;
 
 	private LocalDateTime eventTime;
 

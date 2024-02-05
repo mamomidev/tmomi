@@ -1,5 +1,7 @@
 package org.hh99.tmomi.domain.event.service;
 
+import java.util.List;
+
 import org.hh99.tmomi.domain.event.dto.event.EventRequestDto;
 import org.hh99.tmomi.domain.event.dto.event.EventResponseDto;
 import org.hh99.tmomi.domain.event.entity.Event;
@@ -12,9 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class EventService {
@@ -23,7 +22,8 @@ public class EventService {
 	private final StageRepository stageRepository;
 
 	public EventResponseDto createEvent(EventRequestDto eventRequestDto) {
-		Stage stage = stageRepository.findById(eventRequestDto.getStageId()).orElseThrow(() -> new EntityNotFoundException(""));
+		Stage stage = stageRepository.findById(eventRequestDto.getStageId())
+			.orElseThrow(() -> new EntityNotFoundException(""));
 		Event event = new Event(eventRequestDto, stage);
 		eventRepository.save(event);
 
@@ -33,7 +33,8 @@ public class EventService {
 	@Transactional
 	public EventResponseDto updateEvent(EventRequestDto eventRequestDto, Long eventId) {
 		Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(""));
-		Stage stage = stageRepository.findById(eventRequestDto.getStageId()).orElseThrow(() -> new EntityNotFoundException(""));
+		Stage stage = stageRepository.findById(eventRequestDto.getStageId())
+			.orElseThrow(() -> new EntityNotFoundException(""));
 
 		event.update(eventRequestDto, stage);
 
@@ -49,12 +50,13 @@ public class EventService {
 
 	public EventResponseDto getEvent(Long eventId) {
 		Event event = eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException(""));
-		Stage stage = stageRepository.findById(event.getStage().getId()).orElseThrow(() -> new EntityNotFoundException(""));
+		Stage stage = stageRepository.findById(event.getStage().getId())
+			.orElseThrow(() -> new EntityNotFoundException(""));
 
 		return new EventResponseDto(event, stage.getAddress());
 	}
 
 	public List<EventResponseDto> getEventListByEventName(String query) {
-		return eventRepository.findAllByEventName(query).stream().map(EventResponseDto::new).toList();
+		return eventRepository.findAllByEventNameContaining(query).stream().map(EventResponseDto::new).toList();
 	}
 }
