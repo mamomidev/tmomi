@@ -25,8 +25,8 @@ public class TicketController {
 	}
 
 	@PostMapping("/tickets/{ticketId}/refund")
-	public ResponseEntity<TicketResponseDto> updateTicket(@PathVariable Long ticketId) {
-		return ResponseEntity.ok(ticketService.updateTicket(ticketId));
+	public ResponseEntity<TicketResponseDto> updateTicketRefund(@PathVariable Long ticketId) {
+		return ResponseEntity.ok(ticketService.updateTicketRefund(ticketId));
 	}
 
 }
