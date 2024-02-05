@@ -41,9 +41,9 @@ public class StageController {
 	}
 
 	@PutMapping("/stages/{stageId}")
-	public ResponseEntity updateStage(@PathVariable Long stageId, @RequestBody StageRequestDto stageRequestDto) {
-		stageService.updateStage(stageId, stageRequestDto);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<StageResponseDto> updateStage(@PathVariable Long stageId,
+		@RequestBody StageRequestDto stageRequestDto) {
+		return ResponseEntity.ok(stageService.updateStage(stageId, stageRequestDto));
 	}
 
 	@DeleteMapping("/stages/{stageId}")

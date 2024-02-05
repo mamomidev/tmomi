@@ -49,7 +49,8 @@ public class StageService {
 
 	@Transactional
 	public StageResponseDto updateStage(Long stageId, StageRequestDto stageRequestDto) {
-		Stage stage = stageRepository.findById(stageId).orElseThrow(() -> new EntityNotFoundException());
+		Stage stage = stageRepository.findById(stageId)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_STAGE));
 		stage.updateAddress(stageRequestDto);
 
 		return new StageResponseDto(stage);
