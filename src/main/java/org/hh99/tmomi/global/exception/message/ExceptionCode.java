@@ -20,7 +20,10 @@ public enum ExceptionCode {
 	NOT_EXIST_USER("유저 정보가 존재하지 않습니다."),
 
 	// 좌석
-	NOT_EXIST_SEAT("좌석 정보가 존재하지 않습니다.");
+	NOT_EXIST_SEAT("좌석 정보가 존재하지 않습니다."),
+
+	// 등급
+	NOT_EXIST_RANK("등급 정보가 존재하지 않습니다.");
 
 	private final String message;
 

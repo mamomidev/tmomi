@@ -10,9 +10,11 @@ import org.hh99.tmomi.domain.stage.entity.Rank;
 import org.hh99.tmomi.domain.stage.entity.Seat;
 import org.hh99.tmomi.domain.stage.repository.RankRepository;
 import org.hh99.tmomi.domain.stage.repository.SeatRepository;
+import org.hh99.tmomi.global.exception.GlobalException;
+import org.hh99.tmomi.global.exception.message.ExceptionCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -32,7 +34,7 @@ public class RankService {
 
 	public RankResponseDto createRank(RankRequestDto rankRequestDto) {
 		Seat seat = seatRepository.findById(rankRequestDto.getSeatId())
-			.orElseThrow(() -> new EntityNotFoundException());
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RANK));
 
 		return new RankResponseDto(rankRepository.save(new Rank(rankRequestDto, seat, seat.getStage())));
 	}
@@ -40,8 +42,9 @@ public class RankService {
 	@Transactional
 	public RankResponseDto updateRank(Long rankId, RankRequestDto rankRequestDto) {
 		Seat seat = seatRepository.findById(rankRequestDto.getSeatId())
-			.orElseThrow(() -> new EntityNotFoundException());
-		Rank rank = rankRepository.findById(rankId).orElseThrow(() -> new EntityNotFoundException());
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_SEAT));
+		Rank rank = rankRepository.findById(rankId)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RANK));
 		rank.updateSeatAndRankNameAndPrice(rankRequestDto, seat);
 
 		return new RankResponseDto(rank);
@@ -49,7 +52,8 @@ public class RankService {
 
 	@Transactional
 	public RankResponseDto deleteRank(Long rankId) {
-		Rank rank = rankRepository.findById(rankId).orElseThrow(() -> new EntityNotFoundException());
+		Rank rank = rankRepository.findById(rankId)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RANK));
 		rankRepository.deleteById(rankId);
 
 		return new RankResponseDto(rank);

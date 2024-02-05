@@ -33,7 +33,7 @@ public class SeatController {
 
 	@PostMapping("/seats")
 	public ResponseEntity<SeatResponseDto> createSeat(@RequestBody SeatRequestDto seatRequestDto) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(seatService.createSeat(seatRequestDto));
+		return ResponseEntity.ok(seatService.createSeat(seatRequestDto));
 	}
 
 	@PutMapping("/seats/{seatId}")
