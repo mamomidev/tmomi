@@ -13,7 +13,8 @@ public enum ExceptionCode {
 	NOT_EXIST_STAGE("공연장이 존재하지 않습니다."),
 
 	// 이벤트
-	NOT_EXIST_EVENT("이벤트가 존재하지 않습니다.");
+	NOT_EXIST_EVENT("공연 정보가 존재하지 않습니다."),
+	NOT_EXIST_EVENT_TIME("공연 시간이 존재하지 않습니다.");
 
 	private final String message;
 
