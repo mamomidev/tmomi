@@ -37,14 +37,13 @@ public class RankController {
 	}
 
 	@PutMapping("/ranks/{rankId}")
-	public ResponseEntity updateRank(@PathVariable Long rankId, @RequestBody RankRequestDto rankRequestDto) {
-		rankService.updateRank(rankId, rankRequestDto);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<RankResponseDto> updateRank(@PathVariable Long rankId,
+		@RequestBody RankRequestDto rankRequestDto) {
+		return ResponseEntity.ok(rankService.updateRank(rankId, rankRequestDto));
 	}
 
 	@DeleteMapping("/ranks/{rankId}")
-	public ResponseEntity deleteRank(@PathVariable Long rankId) {
-		rankService.deleteRank(rankId);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	public ResponseEntity<RankResponseDto> deleteRank(@PathVariable Long rankId) {
+		return ResponseEntity.ok(rankService.deleteRank(rankId));
 	}
 }
