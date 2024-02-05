@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -58,7 +57,8 @@ public class StageService {
 
 	@Transactional
 	public StageResponseDto deleteStage(Long stageId) {
-		Stage stage = stageRepository.findById(stageId).orElseThrow(() -> new EntityNotFoundException());
+		Stage stage = stageRepository.findById(stageId)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_STAGE));
 		stageRepository.deleteById(stageId);
 
 		return new StageResponseDto(stage);
