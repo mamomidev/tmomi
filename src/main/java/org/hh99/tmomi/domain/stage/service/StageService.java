@@ -7,7 +7,10 @@ import org.hh99.tmomi.domain.stage.dto.stage.StageRequestDto;
 import org.hh99.tmomi.domain.stage.dto.stage.StageResponseDto;
 import org.hh99.tmomi.domain.stage.entity.Stage;
 import org.hh99.tmomi.domain.stage.repository.StageRepository;
+import org.hh99.tmomi.global.exception.GlobalException;
+import org.hh99.tmomi.global.message.ExceptionCode;
 import org.hh99.tmomi.global.redis.RefreshTokenRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityExistsException;
@@ -36,7 +39,8 @@ public class StageService {
 	}
 
 	public StageResponseDto getStage(Long stageId) {
-		return new StageResponseDto(stageRepository.findById(stageId).orElseThrow(() -> new EntityNotFoundException()));
+		return new StageResponseDto(stageRepository.findById(stageId).orElseThrow(() -> new GlobalException(
+			HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_TICKET)));
 	}
 
 	public StageResponseDto createStage(StageRequestDto stageRequestDto) {
