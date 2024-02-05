@@ -12,9 +12,6 @@ import org.hh99.tmomi.domain.ticket.entity.Ticket;
 import org.hh99.tmomi.domain.ticket.repository.TicketRepository;
 import org.hh99.tmomi.domain.user.entity.User;
 import org.hh99.tmomi.domain.user.repository.UserRepository;
-import org.hh99.tmomi.global.exception.GlobalException;
-import org.hh99.tmomi.global.message.ExceptionCode;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +46,7 @@ public class TicketService {
 
 	@Transactional
 	public TicketResponseDto updateTicket(Long ticketId, TicketRequestDto ticketRequestDto) {
-		Ticket ticket = ticketRepository.findById(ticketId)
-			.orElseThrow(() -> new GlobalException(HttpStatus.NO_CONTENT, ExceptionCode.NOT_EXIST_TICKET));
+		Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() -> new EntityNotFoundException());
 		ticket.update(ticketRequestDto);
 
 		return new TicketResponseDto(ticket);
