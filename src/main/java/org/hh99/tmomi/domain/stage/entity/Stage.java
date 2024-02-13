@@ -23,6 +23,9 @@ public class Stage {
 	@Column
 	private String address;
 
+	@Column
+	private String alias;
+
 	public Stage(StageRequestDto stageRequestDto) {
 		this.address = stageRequestDto.getAddress();
 	}

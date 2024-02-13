@@ -5,4 +5,5 @@ import lombok.Getter;
 @Getter
 public class StageRequestDto {
 	private String address;
+	private String alias;
 }

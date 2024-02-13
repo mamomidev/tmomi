@@ -22,6 +22,8 @@ public class TicketController {
 
 	@GetMapping("/events/{eventId}/times/{eventTimeId}/book")
 	public ResponseEntity<TicketResponseDto> getBooks(@PathVariable Long eventId, @PathVariable Long eventTimeId) {
+		// 비어있는 좌석들 List 조회
+		// 좌석 이름, 좌석 번호
 		return null;
 	}
 
