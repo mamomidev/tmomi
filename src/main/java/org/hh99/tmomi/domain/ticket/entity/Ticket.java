@@ -34,20 +34,32 @@ public class Ticket implements Serializable {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "users_id", insertable = false, updatable = false)
 	private User user;
 
+	@Column(name = "users_id")
+	private Long userId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "event_id")
+	@JoinColumn(name = "event_id", insertable = false, updatable = false)
 	private Event event;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "event_times_id")
-	private EventTimes eventTimes;
+	@Column(name = "event_id")
+	private Long eventId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seat_id")
+	@JoinColumn(name = "event_times_id", insertable = false, updatable = false)
+	private EventTimes eventTimes;
+
+	@Column(name = "event_times_id")
+	private Long eventTimesId;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "seat_id", insertable = false, updatable = false)
 	private Seat seat;
+
+	@Column(name = "seat_id")
+	private Long seatId;
 
 	@Column
 	@Enumerated(EnumType.STRING)
@@ -56,11 +68,11 @@ public class Ticket implements Serializable {
 	@Column
 	private String seatNumber;
 
-	public Ticket(TicketRequestDto ticketRequestDto, User user, Event event, EventTimes eventTimes, Seat seat) {
-		this.user = user;
-		this.event = event;
-		this.eventTimes = eventTimes;
-		this.seat = seat;
+	public Ticket(TicketRequestDto ticketRequestDto) {
+		this.userId = ticketRequestDto.getUserId();
+		this.eventId = ticketRequestDto.getEventId();
+		this.eventTimesId = ticketRequestDto.getEventTimesId();
+		this.seatId = ticketRequestDto.getSeatId();
 		this.ticketStatus = ticketRequestDto.getTicketStatus();
 		this.seatNumber = ticketRequestDto.getSeatNumber();
 	}
