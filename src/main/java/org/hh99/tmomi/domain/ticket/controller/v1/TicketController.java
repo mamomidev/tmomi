@@ -4,6 +4,7 @@ import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto;
 import org.hh99.tmomi.domain.ticket.service.TicketService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,17 +15,27 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/tickets")
 public class TicketController {
 
 	private final TicketService ticketService;
 
-	@PostMapping("/tickets")
+	@GetMapping("/events/{eventId}/times/{eventTimeId}/book")
+	public ResponseEntity<TicketResponseDto> getBooks(@PathVariable Long eventId, @PathVariable Long eventTimeId) {
+		return null;
+	}
+
+	@PostMapping("/seats")
+	public ResponseEntity<TicketResponseDto> getSeats(@RequestBody TicketRequestDto ticketRequestDto) {
+		return null;
+	}
+
+	@PostMapping("/payment")
 	public ResponseEntity<TicketResponseDto> createTicket(@RequestBody TicketRequestDto ticketRequestDto) {
 		return ResponseEntity.ok(ticketService.createTicket(ticketRequestDto));
 	}
 
-	@PostMapping("/tickets/{ticketId}/refund")
+	@PostMapping("/{ticketId}/refund")
 	public ResponseEntity<TicketResponseDto> updateTicketRefund(@PathVariable Long ticketId) {
 		return ResponseEntity.ok(ticketService.updateTicketRefund(ticketId));
 	}
