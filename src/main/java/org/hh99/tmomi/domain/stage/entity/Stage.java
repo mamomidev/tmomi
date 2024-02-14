@@ -28,6 +28,7 @@ public class Stage {
 
 	public Stage(StageRequestDto stageRequestDto) {
 		this.address = stageRequestDto.getAddress();
+		this.alias = stageRequestDto.getAlias();
 	}
 
 	public void updateAddress(StageRequestDto stageRequestDto) {
