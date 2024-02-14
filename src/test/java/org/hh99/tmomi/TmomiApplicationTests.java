@@ -6,10 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 @ExtendWith(SpringExtension.class)
@@ -23,13 +21,14 @@ class TmomiApplicationTests {
 
 	@Autowired
 	private StageRepository stageRepository;
+
 	@Test
 	void contextLoads() {
 	}
 
 	@Test
 	public void test() {
-		stageRepository.findAll().forEach(e-> System.out.println(e.getAddress()));
+		stageRepository.findAll().forEach(e -> System.out.println(e.getAddress()));
 		assert equals("ListTest");
 	}
 }
