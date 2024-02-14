@@ -11,7 +11,7 @@ public class ReservationRequestDto {
 	private Long eventId;
 	private Long eventTimesId;
 	private Long seatId;
-	private String seatNumber;
+	private Integer seatNumber;
 	private Status status;
 
 }

@@ -52,7 +52,7 @@ public class Reservation {
 	private Long seatId;
 
 	@Column(name = "seat_number")
-	private String seatNumber;
+	private Integer seatNumber;
 
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
@@ -64,6 +64,14 @@ public class Reservation {
 		this.seatId = reservationRequestDto.getSeatId();
 		this.seatNumber = reservationRequestDto.getSeatNumber();
 		this.status = reservationRequestDto.getStatus();
+	}
+
+	public Reservation(Seat seat, Event event, EventTimes eventTimes, Integer seatNumber) {
+		this.seatId = seat.getId();
+		this.eventId = event.getId();
+		this.eventTimesId = eventTimes.getId();
+		this.seatNumber = seatNumber;
+		this.status = Status.NONE;
 	}
 
 	public void updateStatus(Status status) {
