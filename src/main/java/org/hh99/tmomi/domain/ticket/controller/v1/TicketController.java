@@ -1,17 +1,19 @@
 package org.hh99.tmomi.domain.ticket.controller.v1;
 
+import org.hh99.tmomi.domain.reservation.dto.ReservationRequestDto;
+import org.hh99.tmomi.domain.reservation.dto.ReservationResponseDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto;
 import org.hh99.tmomi.domain.ticket.service.TicketService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,4 +33,21 @@ public class TicketController {
 		return ResponseEntity.ok().build();
 	}
 
+	@GetMapping("/events/{eventId}/times/{eventTimeId}/book")
+	public ResponseEntity<List<ReservationResponseDto>> getReservationList(@PathVariable Long eventId, @PathVariable Long eventTimeId) {
+		return ResponseEntity.ok(ticketService.getReservationList(eventTimeId));
+	}
+
+	@PostMapping("/seats")
+	public ResponseEntity<Void> lockSeat(@RequestBody ReservationRequestDto reservationRequestDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            userEmail = userDetails.getUsername();
+        }
+        ticketService.lockSeat(reservationRequestDto, userEmail);
+
+        return ResponseEntity.ok().build();
+    }
 }
