@@ -22,9 +22,10 @@ public class EventTimesController {
 	private final EventTimesService eventTimesService;
 
 	@PostMapping("/times/{eventId}")
-	public ResponseEntity<EventTimesResponseDto> createEventTimes(@PathVariable Long eventId,
+	public ResponseEntity<Void> createEventTimes(@PathVariable Long eventId,
 		@RequestBody EventTimesRequestDto eventTimesRequestDto) {
-		return ResponseEntity.ok(eventTimesService.createEventTimes(eventTimesRequestDto, eventId));
+		eventTimesService.createEventTimes(eventTimesRequestDto, eventId);
+		return ResponseEntity.ok().build();
 	}
 
 	@PutMapping("/times/{eventTimesId}")
