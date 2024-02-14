@@ -1,11 +1,13 @@
 package org.hh99.tmomi;
 
-import org.hh99.tmomi.domain.stage.repository.StageRepository;
+import org.hh99.tmomi.global.config.KafkaTopicConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,15 +22,20 @@ class TmomiApplicationTests {
 	private MockMvc mvc;
 
 	@Autowired
-	private StageRepository stageRepository;
-
+	private KafkaTopicConfig kafkaTopicConfig;
+	@Autowired
+	private KafkaTemplate<String, String> kafkaTemplate;
 	@Test
 	void contextLoads() {
 	}
 
 	@Test
-	public void test() {
-		stageRepository.findAll().forEach(e -> System.out.println(e.getAddress()));
-		assert equals("ListTest");
+	public void 카프카_전송() {
+		kafkaTemplate.send("Topic2", "메세지 전송 테스트");
+	}
+
+	@KafkaListener(id = "Consumer3", topics = "Topic2", groupId = "1")
+	public void 카프카_응답(String message) {
+		System.out.println("Message: " + message);
 	}
 }

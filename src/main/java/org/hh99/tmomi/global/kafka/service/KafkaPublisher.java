@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.hh99.tmomi.global.config.KafkaTopicConfig;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.listener.ConsumerSeekAware;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class KafkaPublisher {
+public class KafkaPublisher implements ConsumerSeekAware {
 
 	private final KafkaTopicConfig kafkaTopicConfig;
 
