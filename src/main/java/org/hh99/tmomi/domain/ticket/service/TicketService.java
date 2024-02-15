@@ -32,6 +32,9 @@ public class TicketService {
 
 	@Transactional
 	public TicketResponseDto createTicket(TicketRequestDto ticketRequestDto) {
+		Reservation reservation = reservationRepository.findById(ticketRequestDto.getReservationId())
+						.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
+		reservation.updateStatus(Status.PURCHASE);
 		return new TicketResponseDto(ticketRepository.save(new Ticket(ticketRequestDto)));
 	}
 
