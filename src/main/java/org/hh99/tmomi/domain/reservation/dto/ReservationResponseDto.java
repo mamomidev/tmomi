@@ -1,12 +1,13 @@
 package org.hh99.tmomi.domain.reservation.dto;
 
-import org.hh99.tmomi.domain.reservation.Status;
 import org.hh99.tmomi.domain.reservation.entity.Reservation;
 
+import lombok.Getter;
+
+@Getter
 public class ReservationResponseDto {
     private Long id;
     private Long eventTimesId;
-
     private Long seatId;
     private Integer seatNumber;
 

@@ -1,5 +1,7 @@
 package org.hh99.tmomi.domain.ticket.controller.v1;
 
+import java.util.List;
+
 import org.hh99.tmomi.domain.reservation.dto.ReservationRequestDto;
 import org.hh99.tmomi.domain.reservation.dto.ReservationResponseDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
@@ -9,11 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,8 +39,8 @@ public class TicketController {
 		return ResponseEntity.ok().build();
 	}
 
-	@GetMapping("/events/{eventId}/times/{eventTimeId}/book")
-	public ResponseEntity<List<ReservationResponseDto>> getReservationList(@PathVariable Long eventId, @PathVariable Long eventTimeId) {
+	@GetMapping("/events/times/{eventTimeId}/book")
+	public ResponseEntity<List<ReservationResponseDto>> getReservationList(@PathVariable Long eventTimeId) {
 		return ResponseEntity.ok(ticketService.getReservationList(eventTimeId));
 	}
 
