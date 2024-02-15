@@ -55,16 +55,17 @@ public class TicketService {
 				.map(ReservationResponseDto::new).collect(Collectors.toList());
 	}
 
+	@Transactional
 	public void lockSeat(ReservationRequestDto reservationRequestDto, String userEmail) {
 		String lockName = "seat_lock:"+ userEmail + ":" + reservationRequestDto.getEventTimesId() + ":" + reservationRequestDto.getSeatId();
 		RLock rLock = redissonClient.getLock(lockName);
 
-		long waitTime = 0;
+		long waitTime = 1L;
 		long leaseTime = 180L;
 		Reservation reservation = reservationRepository.findById(reservationRequestDto.getId()).orElseThrow();
 
 		try {
-			boolean isLockAcquired = rLock.tryLock(0, 180, TimeUnit.SECONDS); // 락 획득 시도
+			boolean isLockAcquired = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS); // 락 획득 시도
 			if (isLockAcquired) {
 				reservation.updateStatus(Status.RESERVATION);
 			} else {
@@ -72,12 +73,6 @@ public class TicketService {
 			}
 		} catch (InterruptedException e) {
 			// 이미 선택된 좌석
-		} finally {
-			if (rLock.isLocked() && rLock.isHeldByCurrentThread()) {
-				reservation.updateStatus(Status.NONE);
-				rLock.unlock();
-			}
 		}
-
 	}
 }
