@@ -17,6 +17,10 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
 
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
-		ticketService.unlockSeat(message.toString());
+		String expiredKey = new String(message.getBody());
+
+		if (expiredKey.startsWith("seat_lock:")) {
+			ticketService.unlockSeat(expiredKey);
+		}
 	}
 }

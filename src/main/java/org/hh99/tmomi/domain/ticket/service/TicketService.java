@@ -61,7 +61,7 @@ public class TicketService {
 		Reservation reservation = reservationRepository.findById(reservationRequestDto.getId()).orElseThrow();
 
 		long waitTime = 0L;
-		long leaseTime = 10L;
+		long leaseTime = 180L;
 		boolean isLockAcquired = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS); // 락 획득 시도
 
 		if (!isLockAcquired) {
