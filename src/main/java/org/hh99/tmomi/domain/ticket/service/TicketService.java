@@ -1,5 +1,8 @@
 package org.hh99.tmomi.domain.ticket.service;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.hh99.tmomi.domain.reservation.Status;
 import org.hh99.tmomi.domain.reservation.dto.ReservationRequestDto;
 import org.hh99.tmomi.domain.reservation.dto.ReservationResponseDto;
@@ -9,7 +12,6 @@ import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto;
 import org.hh99.tmomi.domain.ticket.entity.Ticket;
 import org.hh99.tmomi.domain.ticket.repository.TicketRepository;
-import org.hh99.tmomi.global.config.RedissonConfig;
 import org.hh99.tmomi.global.exception.GlobalException;
 import org.hh99.tmomi.global.exception.message.ExceptionCode;
 import org.redisson.api.RLock;
@@ -19,10 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,8 +49,8 @@ public class TicketService {
 	}
 
 	public List<ReservationResponseDto> getReservationList(Long eventTimeId) {
-		return reservationRepository.findAllByEventTimesId(eventTimeId).stream()
-				.map(ReservationResponseDto::new).collect(Collectors.toList());
+		return reservationRepository.findAllByEventTimesIdAndStatus(eventTimeId, Status.NONE).stream()
+				.map(ReservationResponseDto::new).toList();
 	}
 
 	@Transactional
