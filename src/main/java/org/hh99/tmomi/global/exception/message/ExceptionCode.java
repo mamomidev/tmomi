@@ -24,7 +24,9 @@ public enum ExceptionCode {
 	NOT_EXIST_RANK("등급 정보가 존재하지 않습니다."),
 
 	// 예매
-	NOT_EXIST_RESERVATION("예매 정보가 존재하지 않습니다.");
+	NOT_EXIST_RESERVATION("예매 정보가 존재하지 않습니다."),
+
+	LOCKED("이미 선택된 좌석입니다.");
 
 	private final String message;
 
