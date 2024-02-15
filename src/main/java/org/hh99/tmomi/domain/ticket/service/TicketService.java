@@ -54,7 +54,7 @@ public class TicketService {
 	}
 
 	@Transactional
-	public void lockSeat(ReservationRequestDto reservationRequestDto) throws InterruptedException {
+	public void updateReservationStatusWithLocked(ReservationRequestDto reservationRequestDto) throws InterruptedException {
 		String lockName = "seat_lock:" + reservationRequestDto.getId();
 		RLock rLock = redissonClient.getLock(lockName);
 
@@ -72,7 +72,7 @@ public class TicketService {
 	}
 
 	@Transactional
-	public void unlockSeat(String key) {
+	public void updateReservationStatusWithUnLocked(String key) {
 		String[] lockName = key.split(":");
 		Long id = Long.parseLong(lockName[1]);
 
