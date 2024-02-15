@@ -8,11 +8,11 @@ import lombok.Getter;
 
 @Getter
 public class EventTimesResponseDto {
-	// private long eventId;
-
-	private LocalDateTime eventTime;
+	private final long eventTimesId;
+	private final LocalDateTime eventTime;
 
 	public EventTimesResponseDto(EventTimes eventTimes) {
+		this.eventTimesId = eventTimes.getId();
 		this.eventTime = eventTimes.getEventTime();
 	}
 }

@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.hh99.tmomi.domain.event.dto.event.EventRequestDto;
 import org.hh99.tmomi.domain.event.dto.event.EventResponseDto;
+import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto;
 import org.hh99.tmomi.domain.event.entity.Event;
 import org.hh99.tmomi.domain.event.repository.EventRepository;
+import org.hh99.tmomi.domain.event.repository.EventTimesRepository;
 import org.hh99.tmomi.domain.stage.entity.Stage;
 import org.hh99.tmomi.domain.stage.repository.StageRepository;
 import org.hh99.tmomi.global.exception.GlobalException;
@@ -22,6 +24,7 @@ public class EventService {
 
 	private final EventRepository eventRepository;
 	private final StageRepository stageRepository;
+	private final EventTimesRepository eventTimesRepository;
 
 	@Transactional
 	public EventResponseDto createEvent(EventRequestDto eventRequestDto) {
@@ -59,8 +62,9 @@ public class EventService {
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
 		Stage stage = stageRepository.findById(event.getStage().getId())
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_STAGE));
+		List<EventTimesResponseDto> timeList = eventTimesRepository.findByEventId(eventId).stream().map(EventTimesResponseDto::new).toList();
 
-		return new EventResponseDto(event, stage.getAddress());
+		return new EventResponseDto(event, stage.getAddress(), timeList);
 	}
 
 	public List<EventResponseDto> getEventListByEventName(String query) {
