@@ -55,13 +55,13 @@ public class TicketService {
 
 	@Transactional
 	public void lockSeat(ReservationRequestDto reservationRequestDto) throws InterruptedException {
-		String lockName = "seat_lock:"+ reservationRequestDto.getEventTimesId() + ":" + reservationRequestDto.getSeatId();
+		String lockName = "seat_lock:" + reservationRequestDto.getId();
 		RLock rLock = redissonClient.getLock(lockName);
 
 		Reservation reservation = reservationRepository.findById(reservationRequestDto.getId()).orElseThrow();
 
 		long waitTime = 0L;
-		long leaseTime = 180L;
+		long leaseTime = 10L;
 		boolean isLockAcquired = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS); // 락 획득 시도
 
 		if (!isLockAcquired) {
@@ -69,5 +69,16 @@ public class TicketService {
 		}
 
 		reservation.updateStatus(Status.RESERVATION);
+	}
+
+	@Transactional
+	public void unlockSeat(String key) {
+		String[] lockName = key.split(":");
+		Long id = Long.parseLong(lockName[1]);
+
+		Reservation reservation = reservationRepository.findById(id).orElseThrow();
+		if(!reservation.getStatus().equals(Status.PURCHASE)) {
+			reservation.updateStatus(Status.NONE);
+		}
 	}
 }
