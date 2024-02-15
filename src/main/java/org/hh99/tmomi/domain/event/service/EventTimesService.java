@@ -38,13 +38,13 @@ public class EventTimesService {
 		eventTimesRepository.save(eventTimes);
 		List<Seat> seatList = seatRepository.findByStageId(event.getStage().getId());
 		List<Reservation> reservationlist = new ArrayList<>();
-		for (int i = 0; i < seatList.size(); i++) {
-			for (int j = 1; j <= seatList.get(i).getSeatCapacity(); j++) {
-				Reservation reservation = new Reservation(seatList.get(i), event, eventTimes,
-					j);
-				reservationlist.add(reservation);
-			}
-		}
+        for (Seat seat : seatList) {
+            for (int j = 1; j <= seat.getSeatCapacity(); j++) {
+                Reservation reservation = new Reservation(seat, event, eventTimes,
+                        j);
+                reservationlist.add(reservation);
+            }
+        }
 		reservationRepository.saveAll(reservationlist);
 	}
 
@@ -62,6 +62,7 @@ public class EventTimesService {
 		EventTimes eventTimes = eventTimesRepository.findById(eventTimeId)
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT_TIME));
 		eventTimesRepository.delete(eventTimes);
+		reservationRepository.deleteAllByEventTimesId(eventTimeId);
 
 		return new EventTimesResponseDto(eventTimes);
 	}
