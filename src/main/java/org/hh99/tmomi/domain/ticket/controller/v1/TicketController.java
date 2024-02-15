@@ -43,9 +43,7 @@ public class TicketController {
 
 	@PostMapping("/seats")
 	public ResponseEntity<Void> lockSeat(@RequestBody ReservationRequestDto reservationRequestDto) throws InterruptedException {
-
         ticketService.lockSeat(reservationRequestDto);
-
         return ResponseEntity.ok().build();
     }
 }
