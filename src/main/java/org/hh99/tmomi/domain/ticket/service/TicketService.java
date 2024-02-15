@@ -54,23 +54,20 @@ public class TicketService {
 	}
 
 	@Transactional
-	public void lockSeat(ReservationRequestDto reservationRequestDto, String userEmail) {
-		String lockName = "seat_lock:"+ userEmail + ":" + reservationRequestDto.getEventTimesId() + ":" + reservationRequestDto.getSeatId();
+	public void lockSeat(ReservationRequestDto reservationRequestDto) throws InterruptedException {
+		String lockName = "seat_lock:"+ reservationRequestDto.getEventTimesId() + ":" + reservationRequestDto.getSeatId();
 		RLock rLock = redissonClient.getLock(lockName);
 
-		long waitTime = 1L;
+		long waitTime = 0L;
 		long leaseTime = 180L;
 		Reservation reservation = reservationRepository.findById(reservationRequestDto.getId()).orElseThrow();
 
-		try {
-			boolean isLockAcquired = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS); // 락 획득 시도
-			if (isLockAcquired) {
-				reservation.updateStatus(Status.RESERVATION);
-			} else {
-				// 락을 획득하지 못한 경우, 이미 선택된 좌석
-			}
-		} catch (InterruptedException e) {
-			// 이미 선택된 좌석
+		boolean isLockAcquired = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS); // 락 획득 시도
+		if (isLockAcquired) {
+			reservation.updateStatus(Status.RESERVATION);
+		} else {
+			System.out.println("이미 선택된 좌석");
 		}
+
 	}
 }

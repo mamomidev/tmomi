@@ -8,9 +8,6 @@ import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto;
 import org.hh99.tmomi.domain.ticket.service.TicketService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,14 +42,9 @@ public class TicketController {
 	}
 
 	@PostMapping("/seats")
-	public ResponseEntity<Void> lockSeat(@RequestBody ReservationRequestDto reservationRequestDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = null;
-        if (authentication != null && authentication.isAuthenticated()) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            userEmail = userDetails.getUsername();
-        }
-        ticketService.lockSeat(reservationRequestDto, userEmail);
+	public ResponseEntity<Void> lockSeat(@RequestBody ReservationRequestDto reservationRequestDto) throws InterruptedException {
+
+        ticketService.lockSeat(reservationRequestDto);
 
         return ResponseEntity.ok().build();
     }
