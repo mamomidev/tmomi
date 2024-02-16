@@ -51,13 +51,10 @@ public class EventTimesService {
 		}
 		reservationRepository.saveAll(reservationlist);
 
-		// Admin Client 생성
 		AdminClient adminClient = kafkaAdminConfig.kafkaAdmin();
-		// 새로운 토픽 생성
 		String topicName = "reservationEventTimeId" + eventTimes.getId();
 		NewTopic newTopic = new NewTopic(topicName, 1, (short)1);
 		adminClient.createTopics(Collections.singleton(newTopic));
-
 	}
 
 	@Transactional
