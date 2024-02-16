@@ -18,6 +18,7 @@ import org.hh99.tmomi.domain.reservation.entity.Reservation;
 import org.hh99.tmomi.domain.reservation.respository.ReservationRepository;
 import org.hh99.tmomi.domain.stage.entity.Seat;
 import org.hh99.tmomi.domain.stage.repository.SeatRepository;
+import org.hh99.tmomi.global.config.KafkaAdminConfig;
 import org.hh99.tmomi.global.exception.GlobalException;
 import org.hh99.tmomi.global.exception.message.ExceptionCode;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,7 @@ public class EventTimesService {
 	private final EventRepository eventRepository;
 	private final SeatRepository seatRepository;
 	private final ReservationRepository reservationRepository;
+	private final KafkaAdminConfig kafkaAdminConfig;
 
 	@Transactional
 	public void createEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventId) {
@@ -57,16 +59,13 @@ public class EventTimesService {
 		properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 
 		// Admin Client 생성
-		try (AdminClient adminClient = AdminClient.create(properties)) {
-			// 새로운 토픽 생성
-			String topicName = "reservation"+event.getId();
-			NewTopic newTopic = new NewTopic(topicName, 1, (short) 1);
-			adminClient.createTopics(Collections.singleton(newTopic));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+		AdminClient adminClient = kafkaAdminConfig.kafkaAdmin();
+		// 새로운 토픽 생성
+		String topicName = "reservation:eventTimeId:"+eventTimes.getId();
+		NewTopic newTopic = new NewTopic(topicName, 1, (short) 1);
+		adminClient.createTopics(Collections.singleton(newTopic));
 
+	}
 	@Transactional
 	public EventTimesResponseDto updateEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventTimeId) {
 		EventTimes eventTimes = eventTimesRepository.findById(eventTimeId)
