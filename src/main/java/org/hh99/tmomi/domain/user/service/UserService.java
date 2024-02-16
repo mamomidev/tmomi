@@ -31,7 +31,7 @@ public class UserService implements UserDetailsService {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final PasswordEncoder passwordEncoder;
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public JwtToken signIn(UserRequestDto userRequestDto) {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
 			userRequestDto.getEmail(),

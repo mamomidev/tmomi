@@ -1,8 +1,13 @@
 package org.hh99.tmomi.domain.event.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto;
 import org.hh99.tmomi.domain.event.entity.Event;
@@ -46,6 +51,20 @@ public class EventTimesService {
             }
         }
 		reservationRepository.saveAll(reservationlist);
+
+		// Kafka 서버 설정
+		Properties properties = new Properties();
+		properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+
+		// Admin Client 생성
+		try (AdminClient adminClient = AdminClient.create(properties)) {
+			// 새로운 토픽 생성
+			String topicName = "reservation"+event.getId();
+			NewTopic newTopic = new NewTopic(topicName, 1, (short) 1);
+			adminClient.createTopics(Collections.singleton(newTopic));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Transactional
