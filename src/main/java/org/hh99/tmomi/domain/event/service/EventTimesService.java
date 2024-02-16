@@ -1,11 +1,18 @@
 package org.hh99.tmomi.domain.event.service;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto;
 import org.hh99.tmomi.domain.event.entity.Event;
@@ -55,6 +62,23 @@ public class EventTimesService {
 		String topicName = "reservationEventTimeId" + eventTimes.getId();
 		NewTopic newTopic = new NewTopic(topicName, 1, (short)1);
 		adminClient.createTopics(Collections.singleton(newTopic));
+
+		Properties props = new Properties();
+		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, "dynamic-group");
+		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+
+		KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+		consumer.subscribe(Collections.singleton(topicName));
+
+		while (true) {
+			ConsumerRecords<String, String> record = consumer.poll(Duration.ofMillis(100));
+			record.forEach(r -> {
+				System.out.println("Received message from " + r.topic() + ": " + r.value());
+				// 메시지 처리 로직을 여기에 추가
+			});
+		}
 	}
 
 	@Transactional
