@@ -3,10 +3,8 @@ package org.hh99.tmomi.domain.event.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto;
@@ -53,10 +51,6 @@ public class EventTimesService {
             }
         }
 		reservationRepository.saveAll(reservationlist);
-
-		// Kafka 서버 설정
-		Properties properties = new Properties();
-		properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 
 		// Admin Client 생성
 		AdminClient adminClient = kafkaAdminConfig.kafkaAdmin();

@@ -1,6 +1,6 @@
 package org.hh99.tmomi;
 
-import org.hh99.tmomi.global.config.KafkaTopicConfig;
+import org.hh99.tmomi.global.config.KafkaAdminConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ class TmomiApplicationTests {
 	private MockMvc mvc;
 
 	@Autowired
-	private KafkaTopicConfig kafkaTopicConfig;
+	private KafkaAdminConfig kafkaTopicConfig;
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
 	@Test
