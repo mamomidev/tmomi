@@ -43,23 +43,23 @@ public class EventTimesService {
 		eventTimesRepository.save(eventTimes);
 		List<Seat> seatList = seatRepository.findByStageId(event.getStage().getId());
 		List<Reservation> reservationlist = new ArrayList<>();
-        for (Seat seat : seatList) {
-            for (int j = 1; j <= seat.getSeatCapacity(); j++) {
-                Reservation reservation = new Reservation(seat, event, eventTimes,
-                        j);
-                reservationlist.add(reservation);
-            }
-        }
+		for (Seat seat : seatList) {
+			for (int j = 1; j <= seat.getSeatCapacity(); j++) {
+				Reservation reservation = new Reservation(seat, event, eventTimes, j);
+				reservationlist.add(reservation);
+			}
+		}
 		reservationRepository.saveAll(reservationlist);
 
 		// Admin Client 생성
 		AdminClient adminClient = kafkaAdminConfig.kafkaAdmin();
 		// 새로운 토픽 생성
-		String topicName = "reservation:eventTimeId:"+eventTimes.getId();
-		NewTopic newTopic = new NewTopic(topicName, 1, (short) 1);
+		String topicName = "reservationEventTimeId" + eventTimes.getId();
+		NewTopic newTopic = new NewTopic(topicName, 1, (short)1);
 		adminClient.createTopics(Collections.singleton(newTopic));
 
 	}
+
 	@Transactional
 	public EventTimesResponseDto updateEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventTimeId) {
 		EventTimes eventTimes = eventTimesRepository.findById(eventTimeId)
