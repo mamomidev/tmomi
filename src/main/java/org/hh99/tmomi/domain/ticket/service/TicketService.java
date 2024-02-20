@@ -33,7 +33,7 @@ public class TicketService {
 	@Transactional
 	public TicketResponseDto createTicket(TicketRequestDto ticketRequestDto) {
 		Reservation reservation = reservationRepository.findById(ticketRequestDto.getReservationId())
-						.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 		reservation.updateStatus(Status.PURCHASE);
 		return new TicketResponseDto(ticketRepository.save(new Ticket(ticketRequestDto)));
 	}
@@ -53,22 +53,24 @@ public class TicketService {
 
 	public List<ReservationResponseDto> getReservationList(Long eventTimeId) {
 		return reservationRepository.findAllByEventTimesIdAndStatus(eventTimeId, Status.NONE).stream()
-				.map(ReservationResponseDto::new).toList();
+			.map(ReservationResponseDto::new).toList();
 	}
 
 	@Transactional
-	public void updateReservationStatusWithLocked(ReservationRequestDto reservationRequestDto) throws InterruptedException {
+	public void updateReservationStatusWithLocked(ReservationRequestDto reservationRequestDto) throws
+		InterruptedException {
 		String lockName = "seat_lock:" + reservationRequestDto.getId();
 		RLock rLock = redissonClient.getLock(lockName);
 
-		Reservation reservation = reservationRepository.findById(reservationRequestDto.getId()).orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
+		Reservation reservation = reservationRepository.findById(reservationRequestDto.getId())
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 
 		long waitTime = 0L;
 		long leaseTime = 180L;
 		boolean isLockAcquired = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS); // 락 획득 시도
 
 		if (!isLockAcquired) {
-			throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.NOT_EXIST_USER);
+			throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.LOCKED);
 		}
 
 		reservation.updateStatus(Status.RESERVATION);
@@ -80,7 +82,7 @@ public class TicketService {
 		Long id = Long.parseLong(lockName[1]);
 
 		Reservation reservation = reservationRepository.findById(id).orElseThrow();
-		if(!reservation.getStatus().equals(Status.PURCHASE)) {
+		if (!reservation.getStatus().equals(Status.PURCHASE)) {
 			reservation.updateStatus(Status.NONE);
 		}
 	}
