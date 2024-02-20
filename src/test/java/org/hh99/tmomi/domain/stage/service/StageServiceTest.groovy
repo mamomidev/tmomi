@@ -6,6 +6,7 @@ import org.hh99.tmomi.domain.stage.dto.stage.StageResponseDto
 import org.hh99.tmomi.domain.stage.entity.Stage
 import org.hh99.tmomi.domain.stage.repository.StageRepository
 import org.hh99.tmomi.global.exception.GlobalException
+import org.springframework.util.CollectionUtils
 import spock.lang.Specification
 
 class StageServiceTest extends Specification {
@@ -80,27 +81,43 @@ class StageServiceTest extends Specification {
     def "createStage"() {
         given:
         def stageRequestDto = Mock(StageRequestDto)
-        stageRepository.save(stageRequestDto) >> Optional.of(Mock(Stage))
-        def stageResponseDto = Mock(StageResponseDto) {
-            getStage() >> Mock(Stage) {
-                getId() >> 1L
-                getAddress() >> "주소명"
-                getAlias() >> "주소 명칭"
-            }
+        stageRepository.save(_ as Stage) >> { Stage savedStage -> savedStage }
+        def stage = Mock(Stage) {
+            id >> 1L
+            address >> "주소"
         }
 
         when:
-        service.createStage(stageRequestDto) >> stageResponseDto
+        def result = service.createStage(stageRequestDto)
 
         then:
-        assert stageResponseDto != null
+        result instanceof StageResponseDto
     }
 
     def "updateStage"() {
+        given:
+        def stageId = 1L
+        def stageRequestDto = Mock(StageRequestDto)
+        stageRepository.findById(stageId) >> Optional.of(Mock(Stage))
 
+        when:
+        def result = service.updateStage(stageId, stageRequestDto)
+
+        then:
+        result instanceof StageResponseDto
     }
 
     def "deleteStage"() {
+        given:
+        def stageId = 1L
 
+        stageRepository.findById(stageId) >> Optional.of(Mock(Stage))
+        stageRepository.deleteById(stageId)
+
+        when:
+        def result = service.deleteStage(stageId)
+
+        then:
+        result instanceof StageResponseDto
     }
 }
