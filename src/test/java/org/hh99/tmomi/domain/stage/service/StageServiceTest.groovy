@@ -78,7 +78,6 @@ class StageServiceTest extends Specification {
         given:
         def stageRequestDto = Mock(StageRequestDto)
         stageRepository.save(_ as Stage) >> Mock(Stage)
-        def stage = Mock(Stage)
 
         when:
         def result = service.createStage(stageRequestDto)
