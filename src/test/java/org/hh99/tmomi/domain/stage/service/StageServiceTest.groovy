@@ -17,7 +17,7 @@ class StageServiceTest extends Specification {
         service = new StageService(stageRepository)
     }
 
-    def "getStageListByAddress"() {
+    def "공연장 주소 검색"() {
         given:
         def stageRequestDto = Mock(StageRequestDto)
         stageRepository.findByAddressContaining(stageRequestDto.getAddress()) >> _stageList
@@ -34,7 +34,7 @@ class StageServiceTest extends Specification {
         Arrays.asList(Mock(Stage)) | true
     }
 
-    def "getStageListByAddress - EntityExistsException"() {
+    def "공연장 주소 검색 - 결과가 없을 시"() {
         given:
         def stageRequestDto = Mock(StageRequestDto)
         1 * stageRepository.findByAddressContaining(stageRequestDto.getAddress()) >> _stageList
@@ -50,7 +50,7 @@ class StageServiceTest extends Specification {
         Collections.emptyList() | false
     }
 
-    def "getStage"() {
+    def "공연장 조회"() {
         given:
         def stageId = 1L
         1 * stageRepository.findById(stageId) >> Optional.of(Mock(Stage))
@@ -62,7 +62,7 @@ class StageServiceTest extends Specification {
         assert Optional.of(Mock(Stage)) != null
     }
 
-    def "getStage - GlobalException"() {
+    def "공연장 조회 - 결과가 없을 시"() {
         given:
         def stageId = 1L
         stageRepository.findById(stageId) >> _
@@ -74,7 +74,7 @@ class StageServiceTest extends Specification {
         thrown(GlobalException)
     }
 
-    def "createStage"() {
+    def "공연장 생성"() {
         given:
         def stageRequestDto = Mock(StageRequestDto)
         stageRepository.save(_ as Stage) >> Mock(Stage)
@@ -87,7 +87,7 @@ class StageServiceTest extends Specification {
         result instanceof StageResponseDto
     }
 
-    def "updateStage"() {
+    def "공연장 수정"() {
         given:
         def stageId = 1L
         def stageRequestDto = Mock(StageRequestDto)
@@ -100,7 +100,7 @@ class StageServiceTest extends Specification {
         result instanceof StageResponseDto
     }
 
-    def "deleteStage"() {
+    def "공연장 삭제"() {
         given:
         def stageId = 1L
 
