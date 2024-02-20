@@ -19,9 +19,7 @@ class StageServiceTest extends Specification {
 
     def "getStageListByAddress"() {
         given:
-        def stageRequestDto = Mock(StageRequestDto) {
-            getAddress() >> "주소명"
-        }
+        def stageRequestDto = Mock(StageRequestDto)
         stageRepository.findByAddressContaining(stageRequestDto.getAddress()) >> _stageList
 
         when:
@@ -38,9 +36,7 @@ class StageServiceTest extends Specification {
 
     def "getStageListByAddress - EntityExistsException"() {
         given:
-        def stageRequestDto = Mock(StageRequestDto) {
-            getAddress() >> "주소명"
-        }
+        def stageRequestDto = Mock(StageRequestDto)
         1 * stageRepository.findByAddressContaining(stageRequestDto.getAddress()) >> _stageList
 
         when:
@@ -81,11 +77,8 @@ class StageServiceTest extends Specification {
     def "createStage"() {
         given:
         def stageRequestDto = Mock(StageRequestDto)
-        stageRepository.save(_ as Stage) >> { Stage savedStage -> savedStage }
-        def stage = Mock(Stage) {
-            id >> 1L
-            address >> "주소"
-        }
+        stageRepository.save(_ as Stage) >> Mock(Stage)
+        def stage = Mock(Stage)
 
         when:
         def result = service.createStage(stageRequestDto)
