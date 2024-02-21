@@ -31,9 +31,12 @@ public class SecurityConfig {
 			.sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(authorize ->
 				authorize
-					.requestMatchers("/api/v1/signin", "/api/v1/signup", "/api/producer").permitAll()
-					.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-					.anyRequest().authenticated())
+					.requestMatchers("/api/v1/signin", "/api/v1/signup", "/api/producer", "/api/v1/sse-connection")
+					.permitAll()
+					.requestMatchers("/api/v1/admin/**")
+					.hasRole("ADMIN")
+					.anyRequest()
+					.authenticated())
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 		return httpSecurity.build();
 
