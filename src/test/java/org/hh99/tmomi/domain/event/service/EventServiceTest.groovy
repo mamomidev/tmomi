@@ -96,18 +96,27 @@ class EventServiceTest extends Specification {
         def eventId = 1L
         def stageId = 1L
 
-        eventRepository.findById(eventId) >> Optional.of(Mock(Event))
-        eventRepository.findById(eventId) >> Optional.of(Mock(Event) {
+        def event = Mock(Event) {
             getStage() >> Mock(Stage) {
-                getAddress() >> "인천"
+                getId() >> stageId
             }
+        }
+        eventRepository.findById(eventId) >> Optional.of(event)
+        stageRepository.findById(stageId) >> Optional.of(Mock(Stage) {
+            getAddress() >> "인천"
         })
-        eventTimesRepository.findByEventId(eventId) >> List<EventTimes>
+        eventTimesRepository.findByEventId(eventId) >> [Mock(EventTimes) {
+            getId() >> 1L
+        }]
 
         when:
         def result = eventService.getEvent(eventId)
 
         then:
         result instanceof EventResponseDto
+    }
+
+    def "행사 검색 테스트"() {
+
     }
 }
