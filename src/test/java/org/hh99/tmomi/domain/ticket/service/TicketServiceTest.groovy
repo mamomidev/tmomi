@@ -26,7 +26,7 @@ class TicketServiceTest extends Specification {
         service = new TicketService(ticketRepository, reservationRepository, redissonClient)
     }
 
-    def "createTicket"() {
+    def "티켓 생성"() {
         given:
         def ticketRequestDto = Mock(TicketRequestDto)
         reservationRepository.findById(ticketRequestDto.getReservationId()) >> Optional.of(Mock(Reservation))
@@ -40,7 +40,7 @@ class TicketServiceTest extends Specification {
         result instanceof TicketResponseDto
     }
 
-    def "deleteTicket"() {
+    def "티켓 삭제"() {
         given:
         def ticketId = 1L
         ticketRepository.findById(ticketId) >> Optional.of(Mock(Ticket))
@@ -55,7 +55,7 @@ class TicketServiceTest extends Specification {
         noExceptionThrown()
     }
 
-    def "getReservationList"() {
+    def "예매 목록 조회"() {
         given:
         def eventTimeId = 1L
         reservationRepository.findAllByEventTimesIdAndStatus(eventTimeId, Status.NONE) >> Arrays.asList(Mock(Reservation))
@@ -67,7 +67,7 @@ class TicketServiceTest extends Specification {
         CollectionUtils.isEmpty(result) == false
     }
 
-    def "updateReservationStatusWithLocked"() {
+    def "예매 상태 및 락 업데이트"() {
         given:
         def reservationRequestDto = Mock(ReservationRequestDto)
         def lockName = "seat_lock:" + reservationRequestDto.getId()
@@ -94,7 +94,7 @@ class TicketServiceTest extends Specification {
         noExceptionThrown()
     }
 
-    def "updateReservationStatusWithLocked - GlobalException"() {
+    def "예매 상태 및 락 업데이트시 에러"() {
         given:
         def reservationRequestDto = Mock(ReservationRequestDto)
         def lockName = "seat_lock:" + reservationRequestDto.getId()
@@ -115,7 +115,7 @@ class TicketServiceTest extends Specification {
         thrown(GlobalException)
     }
 
-    def "updateReservationStatusWithUnLocked"() {
+    def "예매 상태 및 락 해제 업데이트"() {
         given:
         def key = "redisKey:1"
         def id = 1L

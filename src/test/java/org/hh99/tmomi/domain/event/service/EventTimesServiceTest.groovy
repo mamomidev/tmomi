@@ -33,7 +33,7 @@ class EventTimesServiceTest extends Specification {
     }
 
     @Unroll
-    def "행사 시간 생성 테스트"() {
+    def "행사 시간 생성"() {
         given:
         def eventTimesRequestDto = Mock(EventTimesRequestDto)
         def eventId = 123L
@@ -60,7 +60,7 @@ class EventTimesServiceTest extends Specification {
 
 
     @Unroll
-    def "행사 시간 생성시 행사 없을 시 에러 테스트"() {
+    def "행사 시간 생성시 행사 없을 시 에러"() {
         given:
         def eventTimesRequestDto = Mock(EventTimesRequestDto)
         def eventId = 123L
@@ -85,7 +85,7 @@ class EventTimesServiceTest extends Specification {
         })
     }
 
-    def "행사 시간 수정 테스트"() {
+    def "행사 시간 수정"() {
         given:
         def eventTimesRequestDto = Mock(EventTimesRequestDto)
         def eventTimeId = 1L
@@ -101,7 +101,7 @@ class EventTimesServiceTest extends Specification {
         result instanceof EventTimesResponseDto
     }
 
-    def "행사 시간 삭제 테스트"() {
+    def "행사 시간 삭제"() {
         given:
         def eventTimeId = 1L
         def eventTimes = Mock(EventTimes)
