@@ -33,9 +33,8 @@ class EventTimesServiceTest extends Specification {
     }
 
     @Unroll
-    def "service.createEventTimes"() {
+    def "행사 시간 생성 테스트"() {
         given:
-        // 현재 주어진 조건...
         def eventTimesRequestDto = Mock(EventTimesRequestDto)
         def eventId = 123L
         eventRepository.findById(*_) >> _optionalEvent
@@ -47,11 +46,9 @@ class EventTimesServiceTest extends Specification {
         kafkaAdminConfig.kafkaAdmin() >> Mock(AdminClient)
 
         when:
-        // 언제?
         service.createEventTimes(eventTimesRequestDto, eventId)
 
         then:
-        // 결국 어떻게 되는지..
         noExceptionThrown()
 
         where:
@@ -63,19 +60,16 @@ class EventTimesServiceTest extends Specification {
 
 
     @Unroll
-    def "service.createEventTimes - exception"() {
+    def "행사 시간 생성시 행사 없을 시 에러 테스트"() {
         given:
-        // 현재 주어진 조건...
         def eventTimesRequestDto = Mock(EventTimesRequestDto)
         def eventId = 123L
         eventRepository.findById(*_) >> _optionalEvent
 
         when:
-        // 언제?
         service.createEventTimes(eventTimesRequestDto, eventId)
 
         then:
-        // 결국 어떻게 되는지..
         thrown(GlobalException)
 
         where:
