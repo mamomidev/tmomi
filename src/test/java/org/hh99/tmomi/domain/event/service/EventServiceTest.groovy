@@ -117,6 +117,18 @@ class EventServiceTest extends Specification {
     }
 
     def "행사 검색 테스트"() {
+        given:
+        def query = _ as String
+        eventRepository.findAllByEventNameContaining(query) >> [Mock(Event){
+            getStage() >> Mock(Stage) {
+                getAddress() >> "인천"
+            }
+        }]
 
+        when:
+        def result = eventService.getEventListByEventName(query)
+
+        then:
+        result instanceof List<EventResponseDto>
     }
 }
