@@ -8,6 +8,7 @@ import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto
 import org.hh99.tmomi.domain.ticket.entity.Ticket
 import org.hh99.tmomi.domain.ticket.repository.TicketRepository
+import org.hh99.tmomi.global.exception.GlobalException
 import org.redisson.api.RLock
 import org.redisson.api.RedissonClient
 import org.springframework.util.CollectionUtils
@@ -71,18 +72,62 @@ class TicketServiceTest extends Specification {
         def reservationRequestDto = Mock(ReservationRequestDto)
         def lockName = "seat_lock:" + reservationRequestDto.getId()
         def rLock = Mock(RLock) {
-            tryLock(_, _, _) >> GroovyMock(Boolean)
+            tryLock(_, _, _) >> true
         }
+        redissonClient.getLock(lockName) >> rLock
 
+        // reservationRepository Mock 설정
         reservationRepository.findById(reservationRequestDto.getId()) >> Optional.of(Mock(Reservation))
 
         def waitTime = 0L
         def leaseTime = 180L
+
+        // rLock 초기화
         rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS)
+
         Mock(Reservation).updateStatus(Status.RESERVATION)
 
         when:
         service.updateReservationStatusWithLocked(reservationRequestDto)
+
+        then:
+        noExceptionThrown()
+    }
+
+    def "updateReservationStatusWithLocked - GlobalException"() {
+        given:
+        def reservationRequestDto = Mock(ReservationRequestDto)
+        def lockName = "seat_lock:" + reservationRequestDto.getId()
+        def rLock = Mock(RLock) {
+            tryLock(_, _, _) >> false
+        }
+        redissonClient.getLock(lockName) >> rLock
+        // reservationRepository Mock 설정
+        reservationRepository.findById(reservationRequestDto.getId()) >> Optional.of(Mock(Reservation))
+        def waitTime = 0L
+        def leaseTime = 180L
+        // rLock 초기화
+        rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS)
+        when:
+        service.updateReservationStatusWithLocked(reservationRequestDto)
+
+        then:
+        thrown(GlobalException)
+    }
+
+    def "updateReservationStatusWithUnLocked"() {
+        given:
+        def key = "redisKey:1"
+        def id = 1L
+
+        reservationRepository.findById(id) >> Optional.of(Mock(Reservation) {
+            getStatus() >> Status.RESERVATION
+        })
+        
+        Mock(Reservation).updateStatus(Status.NONE)
+
+        when:
+        service.updateReservationStatusWithUnLocked(key)
 
         then:
         noExceptionThrown()
