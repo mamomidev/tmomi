@@ -18,7 +18,7 @@ class RankServiceTest extends Specification {
         service = new RankService(rankRepository, seatRepository)
     }
 
-    def "getRankListByStageId"() {
+    def "공연장 아이디로 등급 조회"() {
         given:
         def stageId = 1L
         rankRepository.findByStageId(stageId) >> Arrays.asList(Mock(Rank))
@@ -30,7 +30,7 @@ class RankServiceTest extends Specification {
         CollectionUtils.isEmpty(service.getRankListByStageId(stageId)) == false
     }
 
-    def "createRank"() {
+    def "등급 생성"() {
         given:
         def rankRequestDto = Mock(RankRequestDto)
         seatRepository.findById(rankRequestDto.getSeatId()) >> Optional.of(Mock(Seat))
@@ -48,7 +48,7 @@ class RankServiceTest extends Specification {
         result instanceof RankResponseDto
     }
 
-    def "updateRank"() {
+    def "등급 수정"() {
         given:
         def rankId = 1L
         def rankRequestDto = Mock(RankRequestDto)
@@ -69,7 +69,7 @@ class RankServiceTest extends Specification {
         result instanceof RankResponseDto
     }
 
-    def "deleteRank"() {
+    def "등급 삭제"() {
         given:
         def rankId = 1L
         rankRepository.findById(rankId) >> Optional.of(Mock(Rank) {
