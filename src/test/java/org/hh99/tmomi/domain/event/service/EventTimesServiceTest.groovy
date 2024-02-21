@@ -108,6 +108,19 @@ class EventTimesServiceTest extends Specification {
     }
 
     def "행사 시간 삭제 테스트"() {
+        given:
+        def eventTimeId = 1L
+        def eventTimes = Mock(EventTimes)
+        eventTimesRepository.findById(eventTimeId) >> Optional.of(Mock(EventTimes){
+            getId() >> 1L
+        })
+        eventTimesRepository.delete(eventTimes)
+        reservationRepository.deleteAllByEventTimesId(eventTimeId)
 
+        when:
+        def result = service.deleteEventTimes(eventTimeId)
+
+        then:
+        result instanceof EventTimesResponseDto
     }
 }
