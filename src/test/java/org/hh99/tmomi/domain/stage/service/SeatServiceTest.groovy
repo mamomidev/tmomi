@@ -18,7 +18,7 @@ class SeatServiceTest extends Specification {
         service = new SeatService(stageRepository, seatRepository)
     }
 
-    def "getSeatListByStageId"() {
+    def "공연장 아이디로 좌석 조회"() {
         given:
         def stageId = 1L
         seatRepository.findByStageId(stageId) >> Arrays.asList(Mock(Seat))
@@ -30,7 +30,7 @@ class SeatServiceTest extends Specification {
         CollectionUtils.isEmpty(service.getSeatListByStageId(stageId)) == false
     }
 
-    def "createSeat"() {
+    def "좌석 생성"() {
         given:
         def seatRequestDto = Mock(SeatRequestDto)
         stageRepository.findById(seatRequestDto.getStageId()) >> Optional.of(Mock(Stage))
@@ -43,7 +43,7 @@ class SeatServiceTest extends Specification {
         result instanceof SeatResponseDto
     }
 
-    def "updateSeat"() {
+    def "좌석 수정"() {
         given:
         def seatId = 1L
         def seatRequestDto = Mock(SeatRequestDto)
@@ -57,7 +57,7 @@ class SeatServiceTest extends Specification {
         result instanceof SeatResponseDto
     }
 
-    def "deleteSeat"() {
+    def "좌석 삭제"() {
         given:
         def seatId = 1L
         seatRepository.findById(seatId) >> Optional.of(Mock(Seat))
