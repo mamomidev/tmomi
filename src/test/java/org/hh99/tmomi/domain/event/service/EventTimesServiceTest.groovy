@@ -2,7 +2,9 @@ package org.hh99.tmomi.domain.event.service
 
 import org.apache.kafka.clients.admin.AdminClient
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto
+import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto
 import org.hh99.tmomi.domain.event.entity.Event
+import org.hh99.tmomi.domain.event.entity.EventTimes
 import org.hh99.tmomi.domain.event.repository.EventRepository
 import org.hh99.tmomi.domain.event.repository.EventTimesRepository
 import org.hh99.tmomi.domain.reservation.respository.ReservationRepository
@@ -87,5 +89,25 @@ class EventTimesServiceTest extends Specification {
                 getId() >> id
             }
         })
+    }
+
+    def "행사 시간 수정 테스트"() {
+        given:
+        def eventTimesRequestDto = Mock(EventTimesRequestDto)
+        def eventTimeId = 1L
+
+        eventTimesRepository.findById(eventTimeId) >> Optional.of(Mock(EventTimes){
+            getId() >> 1L
+        })
+
+        when:
+        def result = service.updateEventTimes(eventTimesRequestDto, eventTimeId)
+
+        then:
+        result instanceof EventTimesResponseDto
+    }
+
+    def "행사 시간 삭제 테스트"() {
+
     }
 }
