@@ -5,6 +5,7 @@ import org.hh99.tmomi.domain.user.dto.UserRequestDto
 import org.hh99.tmomi.domain.user.dto.UserResponseDto
 import org.hh99.tmomi.domain.user.entity.User
 import org.hh99.tmomi.domain.user.repository.UserRepository
+import org.hh99.tmomi.global.exception.GlobalException
 import org.hh99.tmomi.global.jwt.JwtTokenProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -36,5 +37,17 @@ class UserServiceTest extends Specification {
 
         then:
         result instanceof UserResponseDto
+    }
+
+    def "회원가입 에러"() {
+        given:
+        def userRequestDto = Mock(UserRequestDto)
+        userRepository.findByEmail(*_) >> Optional.of(_)
+
+        when:
+        userService.signUp(userRequestDto)
+
+        then:
+        thrown(GlobalException)
     }
 }
