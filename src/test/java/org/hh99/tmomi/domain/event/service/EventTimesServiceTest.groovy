@@ -2,7 +2,9 @@ package org.hh99.tmomi.domain.event.service
 
 import org.apache.kafka.clients.admin.AdminClient
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto
+import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto
 import org.hh99.tmomi.domain.event.entity.Event
+import org.hh99.tmomi.domain.event.entity.EventTimes
 import org.hh99.tmomi.domain.event.repository.EventRepository
 import org.hh99.tmomi.domain.event.repository.EventTimesRepository
 import org.hh99.tmomi.domain.reservation.respository.ReservationRepository
@@ -31,9 +33,8 @@ class EventTimesServiceTest extends Specification {
     }
 
     @Unroll
-    def "service.createEventTimes"() {
+    def "행사 시간 생성 테스트"() {
         given:
-        // 현재 주어진 조건...
         def eventTimesRequestDto = Mock(EventTimesRequestDto)
         def eventId = 123L
         eventRepository.findById(*_) >> _optionalEvent
@@ -45,11 +46,9 @@ class EventTimesServiceTest extends Specification {
         kafkaAdminConfig.kafkaAdmin() >> Mock(AdminClient)
 
         when:
-        // 언제?
         service.createEventTimes(eventTimesRequestDto, eventId)
 
         then:
-        // 결국 어떻게 되는지..
         noExceptionThrown()
 
         where:
@@ -61,19 +60,16 @@ class EventTimesServiceTest extends Specification {
 
 
     @Unroll
-    def "service.createEventTimes - exception"() {
+    def "행사 시간 생성시 행사 없을 시 에러 테스트"() {
         given:
-        // 현재 주어진 조건...
         def eventTimesRequestDto = Mock(EventTimesRequestDto)
         def eventId = 123L
         eventRepository.findById(*_) >> _optionalEvent
 
         when:
-        // 언제?
         service.createEventTimes(eventTimesRequestDto, eventId)
 
         then:
-        // 결국 어떻게 되는지..
         thrown(GlobalException)
 
         where:
@@ -87,5 +83,38 @@ class EventTimesServiceTest extends Specification {
                 getId() >> id
             }
         })
+    }
+
+    def "행사 시간 수정 테스트"() {
+        given:
+        def eventTimesRequestDto = Mock(EventTimesRequestDto)
+        def eventTimeId = 1L
+
+        eventTimesRepository.findById(eventTimeId) >> Optional.of(Mock(EventTimes){
+            getId() >> 1L
+        })
+
+        when:
+        def result = service.updateEventTimes(eventTimesRequestDto, eventTimeId)
+
+        then:
+        result instanceof EventTimesResponseDto
+    }
+
+    def "행사 시간 삭제 테스트"() {
+        given:
+        def eventTimeId = 1L
+        def eventTimes = Mock(EventTimes)
+        eventTimesRepository.findById(eventTimeId) >> Optional.of(Mock(EventTimes){
+            getId() >> 1L
+        })
+        eventTimesRepository.delete(eventTimes)
+        reservationRepository.deleteAllByEventTimesId(eventTimeId)
+
+        when:
+        def result = service.deleteEventTimes(eventTimeId)
+
+        then:
+        result instanceof EventTimesResponseDto
     }
 }
