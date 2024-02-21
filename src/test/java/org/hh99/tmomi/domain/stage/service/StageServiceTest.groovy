@@ -91,6 +91,7 @@ class StageServiceTest extends Specification {
         def stageId = 1L
         def stageRequestDto = Mock(StageRequestDto)
         stageRepository.findById(stageId) >> Optional.of(Mock(Stage))
+        Mock(Stage).updateAddress(stageRequestDto)
 
         when:
         def result = service.updateStage(stageId, stageRequestDto)
