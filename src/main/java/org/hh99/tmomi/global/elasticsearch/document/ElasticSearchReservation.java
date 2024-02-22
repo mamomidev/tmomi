@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Document(indexName = "items")
+@Document(indexName = "reservation")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

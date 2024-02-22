@@ -1,17 +1,12 @@
 package org.hh99.tmomi.domain.user.controller.v1;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.hh99.tmomi.domain.user.dto.UserRequestDto;
 import org.hh99.tmomi.domain.user.dto.UserResponseDto;
 import org.hh99.tmomi.domain.user.service.UserService;
-import org.hh99.tmomi.global.elasticsearch.document.ElasticSearchReservation;
-import org.hh99.tmomi.global.elasticsearch.repository.ElasticSearchReservationRepository;
 import org.hh99.tmomi.global.jwt.JwtToken;
 import org.hh99.tmomi.global.jwt.JwtTokenProvider;
-import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
