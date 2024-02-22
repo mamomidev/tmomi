@@ -38,13 +38,14 @@ public class UserController {
 		JwtToken jwtToken = userService.signIn(userRequestDto);
 		jwtTokenProvider.createCookieAccessToken(jwtToken.getAccessToken(), httpServletResponse);
 
+		Long num = (long)(Math.random() * 100);
 		ElasticSearchItems elasticSearchItems = ElasticSearchItems.builder()
-			.id(1L)
+			.id(num)
 			.name("test")
 			.userId(10)
 			.build();
 		elasticSearchItemsRepostiory.save(elasticSearchItems);
-		
+
 		return ResponseEntity.ok().build();
 	}
 }
