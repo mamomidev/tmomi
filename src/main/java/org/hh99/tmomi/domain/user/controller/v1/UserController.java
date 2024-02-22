@@ -9,6 +9,7 @@ import org.hh99.tmomi.global.elasticsearch.ElasticSearchItems;
 import org.hh99.tmomi.global.elasticsearch.ElasticSearchItemsRepostiory;
 import org.hh99.tmomi.global.jwt.JwtToken;
 import org.hh99.tmomi.global.jwt.JwtTokenProvider;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,7 @@ public class UserController {
 	private final UserService userService;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final ElasticSearchItemsRepostiory elasticSearchItemsRepostiory;
+	private final ElasticsearchTemplate elasticsearchTemplate;
 
 	@PostMapping("/signup")
 	public ResponseEntity<UserResponseDto> signUp(@RequestBody UserRequestDto userRequestDto) {
@@ -45,6 +47,10 @@ public class UserController {
 			.userId(10)
 			.build();
 		elasticSearchItemsRepostiory.save(elasticSearchItems);
+
+		elasticSearchItems.setId(1L);
+		elasticSearchItems.setName("modify");
+		elasticsearchTemplate.update(elasticSearchItems);
 
 		return ResponseEntity.ok().build();
 	}
