@@ -1,6 +1,8 @@
 package org.hh99.tmomi.domain.user.controller.v1;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hh99.tmomi.domain.user.dto.UserRequestDto;
 import org.hh99.tmomi.domain.user.dto.UserResponseDto;
@@ -40,17 +42,20 @@ public class UserController {
 		JwtToken jwtToken = userService.signIn(userRequestDto);
 		jwtTokenProvider.createCookieAccessToken(jwtToken.getAccessToken(), httpServletResponse);
 
-		Long num = (long)(Math.random() * 100);
-		ElasticSearchItems elasticSearchItems = ElasticSearchItems.builder()
-			.id(num)
-			.name("test")
-			.userId(10)
-			.build();
-		elasticSearchItemsRepostiory.save(elasticSearchItems);
-
-		elasticSearchItems.setId(1L);
-		elasticSearchItems.setName("modify");
-		elasticsearchTemplate.update(elasticSearchItems);
+		List<ElasticSearchItems> searchList = new ArrayList<>();
+		for (long i = 0; i < 50000; i++) {
+			ElasticSearchItems elasticSearchItems = ElasticSearchItems.builder()
+				.id(i)
+				.name("test")
+				.userId(10)
+				.build();
+			searchList.add(elasticSearchItems);
+		}
+		elasticSearchItemsRepostiory.saveAll(searchList);
+		
+		// elasticSearchItems.setId(1L);
+		// elasticSearchItems.setName("modify");
+		// elasticsearchTemplate.update(elasticSearchItems);
 
 		return ResponseEntity.ok().build();
 	}

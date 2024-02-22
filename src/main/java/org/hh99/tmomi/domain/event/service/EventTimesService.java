@@ -1,11 +1,8 @@
 package org.hh99.tmomi.domain.event.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto;
 import org.hh99.tmomi.domain.event.entity.Event;
@@ -16,7 +13,6 @@ import org.hh99.tmomi.domain.reservation.entity.Reservation;
 import org.hh99.tmomi.domain.reservation.respository.ReservationRepository;
 import org.hh99.tmomi.domain.stage.entity.Seat;
 import org.hh99.tmomi.domain.stage.repository.SeatRepository;
-import org.hh99.tmomi.global.config.KafkaAdminConfig;
 import org.hh99.tmomi.global.exception.GlobalException;
 import org.hh99.tmomi.global.exception.message.ExceptionCode;
 import org.springframework.http.HttpStatus;
@@ -33,7 +29,6 @@ public class EventTimesService {
 	private final EventRepository eventRepository;
 	private final SeatRepository seatRepository;
 	private final ReservationRepository reservationRepository;
-	private final KafkaAdminConfig kafkaAdminConfig;
 
 	@Transactional
 	public void createEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventId) {
@@ -50,11 +45,6 @@ public class EventTimesService {
 			}
 		}
 		reservationRepository.saveAll(reservationlist);
-
-		AdminClient adminClient = kafkaAdminConfig.kafkaAdmin();
-		String topicName = "reservationEventTimeId" + eventTimes.getId();
-		NewTopic newTopic = new NewTopic(topicName, 1, (short)1);
-		adminClient.createTopics(Collections.singleton(newTopic));
 	}
 
 	@Transactional

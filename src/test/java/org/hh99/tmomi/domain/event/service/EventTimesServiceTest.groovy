@@ -1,6 +1,6 @@
 package org.hh99.tmomi.domain.event.service
 
-import org.apache.kafka.clients.admin.AdminClient
+
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto
 import org.hh99.tmomi.domain.event.entity.Event
@@ -11,7 +11,6 @@ import org.hh99.tmomi.domain.reservation.respository.ReservationRepository
 import org.hh99.tmomi.domain.stage.entity.Seat
 import org.hh99.tmomi.domain.stage.entity.Stage
 import org.hh99.tmomi.domain.stage.repository.SeatRepository
-import org.hh99.tmomi.global.config.KafkaAdminConfig
 import org.hh99.tmomi.global.exception.GlobalException
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -21,15 +20,13 @@ class EventTimesServiceTest extends Specification {
     EventRepository eventRepository = Mock()
     SeatRepository seatRepository = Mock()
     ReservationRepository reservationRepository = Mock()
-    KafkaAdminConfig kafkaAdminConfig = Mock()
     EventTimesService service
 
     def setup() {
         service = new EventTimesService(eventTimesRepository,
                 eventRepository,
                 seatRepository,
-                reservationRepository,
-                kafkaAdminConfig)
+                reservationRepository)
     }
 
     @Unroll
@@ -43,7 +40,6 @@ class EventTimesServiceTest extends Specification {
             getSeatCapacity() >> 2
         })
         reservationRepository.saveAll(_) >> _
-        kafkaAdminConfig.kafkaAdmin() >> Mock(AdminClient)
 
         when:
         service.createEventTimes(eventTimesRequestDto, eventId)
@@ -90,7 +86,7 @@ class EventTimesServiceTest extends Specification {
         def eventTimesRequestDto = Mock(EventTimesRequestDto)
         def eventTimeId = 1L
 
-        eventTimesRepository.findById(eventTimeId) >> Optional.of(Mock(EventTimes){
+        eventTimesRepository.findById(eventTimeId) >> Optional.of(Mock(EventTimes) {
             getId() >> 1L
         })
 
@@ -105,7 +101,7 @@ class EventTimesServiceTest extends Specification {
         given:
         def eventTimeId = 1L
         def eventTimes = Mock(EventTimes)
-        eventTimesRepository.findById(eventTimeId) >> Optional.of(Mock(EventTimes){
+        eventTimesRepository.findById(eventTimeId) >> Optional.of(Mock(EventTimes) {
             getId() >> 1L
         })
         eventTimesRepository.delete(eventTimes)
