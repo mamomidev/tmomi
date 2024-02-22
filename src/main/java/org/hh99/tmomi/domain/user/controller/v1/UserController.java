@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import org.hh99.tmomi.domain.user.dto.UserRequestDto;
 import org.hh99.tmomi.domain.user.dto.UserResponseDto;
 import org.hh99.tmomi.domain.user.service.UserService;
+import org.hh99.tmomi.global.elasticsearch.ElasticSearchItems;
+import org.hh99.tmomi.global.elasticsearch.ElasticSearchItemsRepostiory;
 import org.hh99.tmomi.global.jwt.JwtToken;
 import org.hh99.tmomi.global.jwt.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ public class UserController {
 
 	private final UserService userService;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final ElasticSearchItemsRepostiory elasticSearchItemsRepostiory;
 
 	@PostMapping("/signup")
 	public ResponseEntity<UserResponseDto> signUp(@RequestBody UserRequestDto userRequestDto) {
@@ -35,6 +38,13 @@ public class UserController {
 		JwtToken jwtToken = userService.signIn(userRequestDto);
 		jwtTokenProvider.createCookieAccessToken(jwtToken.getAccessToken(), httpServletResponse);
 
+		ElasticSearchItems elasticSearchItems = ElasticSearchItems.builder()
+			.id(1L)
+			.name("test")
+			.userId(10)
+			.build();
+		elasticSearchItemsRepostiory.save(elasticSearchItems);
+		
 		return ResponseEntity.ok().build();
 	}
 }
