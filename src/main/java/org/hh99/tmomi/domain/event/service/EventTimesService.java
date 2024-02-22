@@ -1,11 +1,9 @@
 package org.hh99.tmomi.domain.event.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto;
 import org.hh99.tmomi.domain.event.entity.Event;
@@ -16,7 +14,8 @@ import org.hh99.tmomi.domain.reservation.entity.Reservation;
 import org.hh99.tmomi.domain.reservation.respository.ReservationRepository;
 import org.hh99.tmomi.domain.stage.entity.Seat;
 import org.hh99.tmomi.domain.stage.repository.SeatRepository;
-import org.hh99.tmomi.global.config.KafkaAdminConfig;
+import org.hh99.tmomi.global.elasticsearch.document.ElasticSearchReservation;
+import org.hh99.tmomi.global.elasticsearch.repository.ElasticSearchReservationRepository;
 import org.hh99.tmomi.global.exception.GlobalException;
 import org.hh99.tmomi.global.exception.message.ExceptionCode;
 import org.springframework.http.HttpStatus;
@@ -33,7 +32,7 @@ public class EventTimesService {
 	private final EventRepository eventRepository;
 	private final SeatRepository seatRepository;
 	private final ReservationRepository reservationRepository;
-	private final KafkaAdminConfig kafkaAdminConfig;
+	private final ElasticSearchReservationRepository elasticSearchReservationRepository;
 
 	@Transactional
 	public void createEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventId) {
@@ -41,20 +40,23 @@ public class EventTimesService {
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
 		EventTimes eventTimes = new EventTimes(eventTimesRequestDto, event);
 		eventTimesRepository.save(eventTimes);
+
 		List<Seat> seatList = seatRepository.findByStageId(event.getStage().getId());
 		List<Reservation> reservationlist = new ArrayList<>();
+		List<ElasticSearchReservation> elasticSearchReservationList = new ArrayList<>();
+
 		for (Seat seat : seatList) {
 			for (int j = 1; j <= seat.getSeatCapacity(); j++) {
+				String uuid = UUID.randomUUID().toString();
 				Reservation reservation = new Reservation(seat, event, eventTimes, j);
 				reservationlist.add(reservation);
+				ElasticSearchReservation elasticSearchReservation= new ElasticSearchReservation(uuid, reservation);
+				elasticSearchReservationList.add(elasticSearchReservation);
 			}
 		}
-		reservationRepository.saveAll(reservationlist);
 
-		AdminClient adminClient = kafkaAdminConfig.kafkaAdmin();
-		String topicName = "reservationEventTimeId" + eventTimes.getId();
-		NewTopic newTopic = new NewTopic(topicName, 1, (short)1);
-		adminClient.createTopics(Collections.singleton(newTopic));
+		reservationRepository.saveAll(reservationlist);
+		elasticSearchReservationRepository.saveAll(elasticSearchReservationList);
 	}
 
 	@Transactional
