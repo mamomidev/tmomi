@@ -7,8 +7,8 @@ import java.util.List;
 import org.hh99.tmomi.domain.user.dto.UserRequestDto;
 import org.hh99.tmomi.domain.user.dto.UserResponseDto;
 import org.hh99.tmomi.domain.user.service.UserService;
-import org.hh99.tmomi.global.elasticsearch.ElasticSearchItems;
-import org.hh99.tmomi.global.elasticsearch.ElasticSearchItemsRepostiory;
+import org.hh99.tmomi.global.elasticsearch.entity.ElasticSearchReservation;
+import org.hh99.tmomi.global.elasticsearch.repository.ElasticSearchItemsRepostiory;
 import org.hh99.tmomi.global.jwt.JwtToken;
 import org.hh99.tmomi.global.jwt.JwtTokenProvider;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
@@ -42,9 +42,9 @@ public class UserController {
 		JwtToken jwtToken = userService.signIn(userRequestDto);
 		jwtTokenProvider.createCookieAccessToken(jwtToken.getAccessToken(), httpServletResponse);
 
-		List<ElasticSearchItems> searchList = new ArrayList<>();
+		List<ElasticSearchReservation> searchList = new ArrayList<>();
 		for (long i = 0; i < 50000; i++) {
-			ElasticSearchItems elasticSearchItems = ElasticSearchItems.builder()
+			ElasticSearchReservation elasticSearchItems = ElasticSearchReservation.builder()
 				.id(i)
 				.name("test")
 				.userId(10)

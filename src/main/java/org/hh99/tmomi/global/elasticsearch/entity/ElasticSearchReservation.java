@@ -1,4 +1,4 @@
-package org.hh99.tmomi.global.elasticsearch;
+package org.hh99.tmomi.global.elasticsearch.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -15,7 +15,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class ElasticSearchItems {
+public class ElasticSearchReservation {
 	@Id
 	private Long id;
 
