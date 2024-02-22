@@ -23,7 +23,7 @@ import lombok.Setter;
 public class ElasticSearchReservation {
 
 	@Id
-	private Long id;
+	private String uuid;
 
 	private Long eventId;
 
