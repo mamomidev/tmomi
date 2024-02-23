@@ -43,4 +43,8 @@ public class ElasticSearchReservation {
 		this.seatNumber = reservation.getSeatNumber();
 		this.status = reservation.getStatus();
 	}
+
+	public void updateStatus(Status status) {
+		this.status = status;
+	}
 }

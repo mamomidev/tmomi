@@ -2,6 +2,7 @@ package org.hh99.tmomi.domain.ticket.controller.v1;
 
 import java.util.List;
 
+import org.hh99.tmomi.domain.reservation.dto.ElasticReservationRequestDto;
 import org.hh99.tmomi.domain.reservation.dto.ReservationRequestDto;
 import org.hh99.tmomi.domain.reservation.dto.ReservationResponseDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
@@ -42,8 +43,8 @@ public class TicketController {
 	}
 
 	@PostMapping("/seats")
-	public ResponseEntity<Void> lockSeat(@RequestBody ReservationRequestDto reservationRequestDto) throws InterruptedException {
-        ticketService.updateReservationStatusWithLocked(reservationRequestDto);
+	public ResponseEntity<Void> lockSeat(@RequestBody ElasticReservationRequestDto elasticReservationRequestDto) throws InterruptedException {
+        ticketService.updateReservationStatusWithLocked(elasticReservationRequestDto);
         return ResponseEntity.ok().build();
     }
 }
