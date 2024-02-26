@@ -22,7 +22,7 @@ public class ElasticSearchReservation {
 
 	@Id
 	private String id;
-	
+
 	private Long eventId;
 
 	private Long eventTimesId;
@@ -34,12 +34,13 @@ public class ElasticSearchReservation {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-	public ElasticSearchReservation(String uuid, Long seatId, Long eventId, Long eventTimesId, int seatNumber) {
+	public ElasticSearchReservation(String uuid, Long seatId, Long eventId, Long eventTimesId, Integer seatNumber) {
 		this.id = uuid;
 		this.eventId = eventId;
 		this.eventTimesId = eventTimesId;
 		this.seatId = seatId;
 		this.seatNumber = seatNumber;
+		this.status = Status.NONE;
 	}
 
 	public void updateStatus(Status status) {
