@@ -41,17 +41,17 @@ public class TicketService {
 	private final ElasticsearchTemplate elasticsearchTemplate;
 
 	@Transactional
-	public TicketResponseDto createTicket(TicketRequestDto ticketRequestDto, UserDetails userDetails) {
+	public TicketResponseDto createTicket(TicketRequestDto ticketRequestDto, String userEmail) {
 		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(ticketRequestDto.getReservationId())
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 		elasticSearchReservation.updateStatus(Status.PURCHASE);
 		elasticsearchTemplate.update(elasticSearchReservation);
-		User users = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
-		return new TicketResponseDto(ticketRepository.save(new Ticket(ticketRequestDto,users.getId())));
+		User users = userRepository.findByEmail(userEmail).orElseThrow();
+		return new TicketResponseDto(ticketRepository.save(new Ticket(elasticSearchReservation,users.getId())));
 	}
 
 	@Transactional
-	public void deleteTicket(Long ticketId) {
+	public void refundTicket(Long ticketId) {
 		Ticket ticket = ticketRepository.findById(ticketId)
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_TICKET));
 
@@ -59,13 +59,9 @@ public class TicketService {
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 
 		elasticSearchReservation.updateStatus(Status.NONE);
-		ticketRepository.delete(ticket);
+		elasticsearchTemplate.update(elasticSearchReservation);
 
-	}
-
-	public List<ReservationResponseDto> getReservationList(Long eventTimeId) {
-		return reservationRepository.findAllByEventTimesIdAndStatus(eventTimeId, Status.NONE).stream()
-			.map(ReservationResponseDto::new).toList();
+		ticket.updateStatus(Status.REFUND);
 	}
 
 	@Transactional

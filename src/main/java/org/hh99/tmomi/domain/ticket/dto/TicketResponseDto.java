@@ -7,12 +7,9 @@ import lombok.Getter;
 @Getter
 public class TicketResponseDto {
 
-	private Long id;
-	private final Long userId;
-	private final Long reservationId;
+	private final Ticket ticket;
 
 	public TicketResponseDto(Ticket ticket) {
-		this.userId = ticket.getUserId();
-		this.reservationId = ticket.getReservationId();
+		this.ticket = ticket;
 	}
 }

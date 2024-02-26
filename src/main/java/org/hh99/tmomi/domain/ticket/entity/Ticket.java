@@ -2,13 +2,17 @@ package org.hh99.tmomi.domain.ticket.entity;
 
 import java.io.Serializable;
 
+import org.hh99.tmomi.domain.reservation.Status;
 import org.hh99.tmomi.domain.reservation.entity.Reservation;
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.user.entity.User;
+import org.hh99.tmomi.global.elasticsearch.document.ElasticSearchReservation;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,16 +41,31 @@ public class Ticket implements Serializable {
 	@Column(name = "users_id")
 	private Long userId;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "reservation_id", insertable = false, updatable = false)
-	private Reservation reservation;
+	@Column(name = "event_id")
+	private Long eventId;
+
+	@Column(name = "seat_id")
+	private Long seatId;
 
 	@Column(name = "reservation_id")
 	private String reservationId;
 
-	public Ticket(TicketRequestDto ticketRequestDto, Long userId) {
+	@Column(name ="seat_number")
+	private Integer seatNumber;
+
+	@Enumerated(EnumType.STRING)
+	private Status status;
+
+	public Ticket(ElasticSearchReservation elasticSearchReservation, Long userId) {
 		this.userId = userId;
-		this.reservationId = ticketRequestDto.getReservationId();
+		this.eventId = elasticSearchReservation.getEventId();
+		this.seatId = elasticSearchReservation.getSeatId();
+		this.reservationId = elasticSearchReservation.getId();
+		this.seatNumber = elasticSearchReservation.getSeatNumber();
+		this.status = elasticSearchReservation.getStatus();
 	}
 
+	public void updateStatus(Status status) {
+		this.status = status;
+	}
 }

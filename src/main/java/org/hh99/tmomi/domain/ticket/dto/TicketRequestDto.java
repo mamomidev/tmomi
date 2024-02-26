@@ -7,4 +7,5 @@ public class TicketRequestDto {
 
 	private Long id;
 	private String reservationId;
+
 }

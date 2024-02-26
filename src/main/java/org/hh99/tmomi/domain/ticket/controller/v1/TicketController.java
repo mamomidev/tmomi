@@ -1,10 +1,6 @@
 package org.hh99.tmomi.domain.ticket.controller.v1;
 
-import java.util.List;
-
 import org.hh99.tmomi.domain.reservation.dto.ElasticReservationRequestDto;
-import org.hh99.tmomi.domain.reservation.dto.ReservationRequestDto;
-import org.hh99.tmomi.domain.reservation.dto.ReservationResponseDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto;
 import org.hh99.tmomi.domain.ticket.service.TicketService;
@@ -12,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,18 +26,13 @@ public class TicketController {
 	@PostMapping("/payment")
 	public ResponseEntity<TicketResponseDto> createTicket(@RequestBody TicketRequestDto ticketRequestDto,@AuthenticationPrincipal
 		UserDetails userDetails) {
-		return ResponseEntity.ok(ticketService.createTicket(ticketRequestDto, userDetails));
+		return ResponseEntity.ok(ticketService.createTicket(ticketRequestDto, userDetails.getUsername()));
 	}
 
 	@DeleteMapping("/{ticketId}/refund")
-	public ResponseEntity<TicketResponseDto> deleteTicket(@PathVariable Long ticketId) {
-		ticketService.deleteTicket(ticketId);
+	public ResponseEntity<TicketResponseDto> refundTicket(@PathVariable Long ticketId) {
+		ticketService.refundTicket(ticketId);
 		return ResponseEntity.ok().build();
-	}
-
-	@GetMapping("/events/times/{eventTimeId}/book")
-	public ResponseEntity<List<ReservationResponseDto>> getReservationList(@PathVariable Long eventTimeId) {
-		return ResponseEntity.ok(ticketService.getReservationList(eventTimeId));
 	}
 
 	@PostMapping("/seats")
