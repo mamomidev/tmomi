@@ -52,9 +52,11 @@ public class TicketService {
 		elasticsearchTemplate.update(elasticSearchReservation);
 		User users = userRepository.findByEmail(userEmail).orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER));
 		Ticket ticket = ticketRepository.findByReservationId(ticketRequestDto.getReservationId());
+
 		if (ticket != null && ticket.getStatus().equals(Status.PURCHASE)) {
 			throw new GlobalException(HttpStatus.BAD_REQUEST, ExceptionCode.PURCHASED_TICKET);
 		}
+
 		return new TicketResponseDto(ticketRepository.save(new Ticket(elasticSearchReservation, users.getId())));
 	}
 
@@ -97,7 +99,6 @@ public class TicketService {
 		seatValidateRepository.save(new SeatValidate(uuid, email));
 		elasticSearchReservation.updateStatus(Status.RESERVATION);
 		elasticsearchTemplate.update(elasticSearchReservation);
-
 	}
 
 	@Transactional
