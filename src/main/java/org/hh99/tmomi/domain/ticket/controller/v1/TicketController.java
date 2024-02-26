@@ -24,7 +24,8 @@ public class TicketController {
 	private final TicketService ticketService;
 
 	@PostMapping("/payment")
-	public ResponseEntity<TicketResponseDto> createTicket(@RequestBody TicketRequestDto ticketRequestDto,@AuthenticationPrincipal
+	public ResponseEntity<TicketResponseDto> createTicket(@RequestBody TicketRequestDto ticketRequestDto,
+		@AuthenticationPrincipal
 		UserDetails userDetails) {
 		return ResponseEntity.ok(ticketService.createTicket(ticketRequestDto, userDetails.getUsername()));
 	}
@@ -36,8 +37,11 @@ public class TicketController {
 	}
 
 	@PostMapping("/seats")
-	public ResponseEntity<Void> lockSeat(@RequestBody ElasticReservationRequestDto elasticReservationRequestDto) throws InterruptedException {
-        ticketService.updateReservationStatusWithLocked(elasticReservationRequestDto);
-        return ResponseEntity.ok().build();
-    }
+	public ResponseEntity<Void> lockSeat(@RequestBody ElasticReservationRequestDto elasticReservationRequestDto,
+		@AuthenticationPrincipal
+		UserDetails userDetails) throws
+		InterruptedException {
+		ticketService.updateReservationStatusWithLocked(elasticReservationRequestDto, userDetails.getUsername());
+		return ResponseEntity.ok().build();
+	}
 }

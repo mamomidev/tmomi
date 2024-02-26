@@ -14,6 +14,8 @@ import org.hh99.tmomi.domain.user.entity.User;
 import org.hh99.tmomi.domain.user.repository.UserRepository;
 import org.hh99.tmomi.global.exception.GlobalException;
 import org.hh99.tmomi.global.exception.message.ExceptionCode;
+import org.hh99.tmomi.global.redis.SeatValidate;
+import org.hh99.tmomi.global.redis.SeatValidateRepository;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
@@ -33,8 +35,17 @@ public class TicketService {
 	private final RedissonClient redissonClient;
 	private final ElasticsearchTemplate elasticsearchTemplate;
 
+	private final SeatValidateRepository seatValidateRepository;
+
 	@Transactional
 	public TicketResponseDto createTicket(TicketRequestDto ticketRequestDto, String userEmail) {
+		SeatValidate seatValidate = seatValidateRepository.findById(ticketRequestDto.getReservationId())
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_SEAT));
+
+		if (!seatValidate.getEmail().equals(userEmail)) {
+			throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.NOT_SELECT_LOCKED);
+		}
+
 		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(
 				ticketRequestDto.getReservationId())
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
@@ -64,13 +75,16 @@ public class TicketService {
 	}
 
 	@Transactional
-	public void updateReservationStatusWithLocked(ElasticReservationRequestDto elasticReservationRequestDto) throws
+	public void updateReservationStatusWithLocked(ElasticReservationRequestDto elasticReservationRequestDto,
+		String email) throws
 		InterruptedException {
-		String lockName = "seat_lock:" + elasticReservationRequestDto.getUuid();
+
+		String uuid = elasticReservationRequestDto.getReservationId();
+		String lockName = "seat_lock:" + uuid;
 		RLock rLock = redissonClient.getLock(lockName);
 
 		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(
-				elasticReservationRequestDto.getUuid())
+				elasticReservationRequestDto.getReservationId())
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 
 		long waitTime = 0L;
@@ -81,6 +95,7 @@ public class TicketService {
 			throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.LOCKED);
 		}
 
+		seatValidateRepository.save(new SeatValidate(uuid, email));
 		elasticSearchReservation.updateStatus(Status.RESERVATION);
 		elasticsearchTemplate.update(elasticSearchReservation);
 

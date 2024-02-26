@@ -7,6 +7,6 @@ import lombok.Getter;
 @Getter
 public class ElasticReservationRequestDto {
 
-	private String uuid;
+	private String reservationId;
 	private Status status;
 }

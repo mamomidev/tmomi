@@ -30,6 +30,7 @@ public enum ExceptionCode {
 
 	// 락
 	LOCKED("이미 선택된 좌석입니다."),
+	NOT_SELECT_LOCKED("선택한 좌석이 아닙니다."),
 
 	// 대기열
 	NOT_EXIST_QUEUE_IN_USER("대기열에 유저가 존재하지 않습니다.");
