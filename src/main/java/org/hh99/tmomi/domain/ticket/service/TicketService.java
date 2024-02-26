@@ -34,7 +34,6 @@ public class TicketService {
 	private final ElasticSearchReservationRepository elasticSearchReservationRepository;
 	private final RedissonClient redissonClient;
 	private final ElasticsearchTemplate elasticsearchTemplate;
-
 	private final SeatValidateRepository seatValidateRepository;
 
 	@Transactional
