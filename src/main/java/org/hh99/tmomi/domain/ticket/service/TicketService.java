@@ -13,6 +13,8 @@ import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto;
 import org.hh99.tmomi.domain.ticket.entity.Ticket;
 import org.hh99.tmomi.domain.ticket.repository.TicketRepository;
+import org.hh99.tmomi.domain.user.entity.User;
+import org.hh99.tmomi.domain.user.repository.UserRepository;
 import org.hh99.tmomi.global.elasticsearch.document.ElasticSearchReservation;
 import org.hh99.tmomi.global.elasticsearch.repository.ElasticSearchReservationRepository;
 import org.hh99.tmomi.global.exception.GlobalException;
@@ -21,6 +23,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,16 +35,19 @@ public class TicketService {
 
 	private final TicketRepository ticketRepository;
 	private final ReservationRepository reservationRepository;
+	private final UserRepository userRepository;
 	private final ElasticSearchReservationRepository elasticSearchReservationRepository;
 	private final RedissonClient redissonClient;
 	private final ElasticsearchTemplate elasticsearchTemplate;
 
 	@Transactional
-	public TicketResponseDto createTicket(TicketRequestDto ticketRequestDto) {
-		Reservation reservation = reservationRepository.findById(ticketRequestDto.getReservationId())
+	public TicketResponseDto createTicket(TicketRequestDto ticketRequestDto, UserDetails userDetails) {
+		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(ticketRequestDto.getReservationId())
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
-		reservation.updateStatus(Status.PURCHASE);
-		return new TicketResponseDto(ticketRepository.save(new Ticket(ticketRequestDto)));
+		elasticSearchReservation.updateStatus(Status.PURCHASE);
+		elasticsearchTemplate.update(elasticSearchReservation);
+		User users = userRepository.findByEmail(userDetails.getUsername()).orElseThrow();
+		return new TicketResponseDto(ticketRepository.save(new Ticket(ticketRequestDto,users.getId())));
 	}
 
 	@Transactional
@@ -49,10 +55,10 @@ public class TicketService {
 		Ticket ticket = ticketRepository.findById(ticketId)
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_TICKET));
 
-		Reservation reservation = reservationRepository.findById(ticket.getReservationId())
+		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(ticket.getReservationId())
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 
-		reservation.updateStatus(Status.NONE);
+		elasticSearchReservation.updateStatus(Status.NONE);
 		ticketRepository.delete(ticket);
 
 	}

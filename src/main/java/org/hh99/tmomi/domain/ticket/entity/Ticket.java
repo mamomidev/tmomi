@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.hh99.tmomi.domain.reservation.entity.Reservation;
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.user.entity.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,10 +42,10 @@ public class Ticket implements Serializable {
 	private Reservation reservation;
 
 	@Column(name = "reservation_id")
-	private Long reservationId;
+	private String reservationId;
 
-	public Ticket(TicketRequestDto ticketRequestDto) {
-		this.userId = ticketRequestDto.getUserId();
+	public Ticket(TicketRequestDto ticketRequestDto, Long userId) {
+		this.userId = userId;
 		this.reservationId = ticketRequestDto.getReservationId();
 	}
 

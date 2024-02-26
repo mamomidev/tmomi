@@ -6,6 +6,5 @@ import lombok.Getter;
 public class TicketRequestDto {
 
 	private Long id;
-	private Long userId;
-	private Long reservationId;
+	private String reservationId;
 }
