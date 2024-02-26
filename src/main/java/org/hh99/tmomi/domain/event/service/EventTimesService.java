@@ -10,12 +10,10 @@ import org.hh99.tmomi.domain.event.entity.Event;
 import org.hh99.tmomi.domain.event.entity.EventTimes;
 import org.hh99.tmomi.domain.event.repository.EventRepository;
 import org.hh99.tmomi.domain.event.repository.EventTimesRepository;
-import org.hh99.tmomi.domain.reservation.entity.Reservation;
-import org.hh99.tmomi.domain.reservation.respository.ReservationRepository;
+import org.hh99.tmomi.domain.reservation.document.ElasticSearchReservation;
+import org.hh99.tmomi.domain.reservation.respository.ElasticSearchReservationRepository;
 import org.hh99.tmomi.domain.stage.entity.Seat;
 import org.hh99.tmomi.domain.stage.repository.SeatRepository;
-import org.hh99.tmomi.global.elasticsearch.document.ElasticSearchReservation;
-import org.hh99.tmomi.global.elasticsearch.repository.ElasticSearchReservationRepository;
 import org.hh99.tmomi.global.exception.GlobalException;
 import org.hh99.tmomi.global.exception.message.ExceptionCode;
 import org.springframework.http.HttpStatus;
@@ -31,7 +29,6 @@ public class EventTimesService {
 	private final EventTimesRepository eventTimesRepository;
 	private final EventRepository eventRepository;
 	private final SeatRepository seatRepository;
-	private final ReservationRepository reservationRepository;
 	private final ElasticSearchReservationRepository elasticSearchReservationRepository;
 
 	@Transactional
@@ -42,20 +39,16 @@ public class EventTimesService {
 		eventTimesRepository.save(eventTimes);
 
 		List<Seat> seatList = seatRepository.findByStageId(event.getStage().getId());
-		List<Reservation> reservationlist = new ArrayList<>();
 		List<ElasticSearchReservation> elasticSearchReservationList = new ArrayList<>();
 
 		for (Seat seat : seatList) {
 			for (int j = 1; j <= seat.getSeatCapacity(); j++) {
 				String uuid = UUID.randomUUID().toString();
-				Reservation reservation = new Reservation(seat, event, eventTimes, j);
-				reservationlist.add(reservation);
-				ElasticSearchReservation elasticSearchReservation= new ElasticSearchReservation(uuid, reservation);
+				ElasticSearchReservation elasticSearchReservation = new ElasticSearchReservation(uuid, seat.getId(),
+					event.getId(), eventTimes.getId(), j);
 				elasticSearchReservationList.add(elasticSearchReservation);
 			}
 		}
-
-		reservationRepository.saveAll(reservationlist);
 		elasticSearchReservationRepository.saveAll(elasticSearchReservationList);
 	}
 
@@ -73,7 +66,6 @@ public class EventTimesService {
 		EventTimes eventTimes = eventTimesRepository.findById(eventTimeId)
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT_TIME));
 		eventTimesRepository.delete(eventTimes);
-		reservationRepository.deleteAllByEventTimesId(eventTimeId);
 
 		return new EventTimesResponseDto(eventTimes);
 	}

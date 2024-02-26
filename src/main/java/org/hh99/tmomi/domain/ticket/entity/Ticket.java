@@ -3,11 +3,8 @@ package org.hh99.tmomi.domain.ticket.entity;
 import java.io.Serializable;
 
 import org.hh99.tmomi.domain.reservation.Status;
-import org.hh99.tmomi.domain.reservation.entity.Reservation;
-import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
+import org.hh99.tmomi.domain.reservation.document.ElasticSearchReservation;
 import org.hh99.tmomi.domain.user.entity.User;
-import org.hh99.tmomi.global.elasticsearch.document.ElasticSearchReservation;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +16,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,7 +46,7 @@ public class Ticket implements Serializable {
 	@Column(name = "reservation_id")
 	private String reservationId;
 
-	@Column(name ="seat_number")
+	@Column(name = "seat_number")
 	private Integer seatNumber;
 
 	@Enumerated(EnumType.STRING)

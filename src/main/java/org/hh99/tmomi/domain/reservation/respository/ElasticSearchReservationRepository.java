@@ -1,9 +1,9 @@
-package org.hh99.tmomi.global.elasticsearch.repository;
+package org.hh99.tmomi.domain.reservation.respository;
 
 import java.util.List;
 
 import org.hh99.tmomi.domain.reservation.Status;
-import org.hh99.tmomi.global.elasticsearch.document.ElasticSearchReservation;
+import org.hh99.tmomi.domain.reservation.document.ElasticSearchReservation;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 public interface ElasticSearchReservationRepository extends ElasticsearchRepository<ElasticSearchReservation, String> {

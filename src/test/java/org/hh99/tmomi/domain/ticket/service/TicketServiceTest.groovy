@@ -1,9 +1,7 @@
 package org.hh99.tmomi.domain.ticket.service
 
 import org.hh99.tmomi.domain.reservation.Status
-import org.hh99.tmomi.domain.reservation.dto.ReservationRequestDto
-import org.hh99.tmomi.domain.reservation.entity.Reservation
-import org.hh99.tmomi.domain.reservation.respository.ReservationRepository
+import org.hh99.tmomi.domain.reservation.respository.ElasticSearchReservationRepository
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto
 import org.hh99.tmomi.domain.ticket.entity.Ticket
@@ -19,7 +17,7 @@ import java.util.concurrent.TimeUnit
 class TicketServiceTest extends Specification {
     TicketService service
     TicketRepository ticketRepository = Mock(TicketRepository)
-    ReservationRepository reservationRepository = Mock(ReservationRepository)
+    ElasticSearchReservationRepository reservationRepository = Mock(ElasticSearchReservationRepository)
     RedissonClient redissonClient = Mock(RedissonClient)
 
     def setup() {
@@ -123,7 +121,7 @@ class TicketServiceTest extends Specification {
         reservationRepository.findById(id) >> Optional.of(Mock(Reservation) {
             getStatus() >> Status.RESERVATION
         })
-        
+
         Mock(Reservation).updateStatus(Status.NONE)
 
         when:

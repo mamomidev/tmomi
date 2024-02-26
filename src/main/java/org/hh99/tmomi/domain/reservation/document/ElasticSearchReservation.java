@@ -1,7 +1,6 @@
-package org.hh99.tmomi.global.elasticsearch.document;
+package org.hh99.tmomi.domain.reservation.document;
 
 import org.hh99.tmomi.domain.reservation.Status;
-import org.hh99.tmomi.domain.reservation.entity.Reservation;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import jakarta.persistence.EnumType;
@@ -23,7 +22,7 @@ public class ElasticSearchReservation {
 
 	@Id
 	private String id;
-
+	
 	private Long eventId;
 
 	private Long eventTimesId;
@@ -35,13 +34,12 @@ public class ElasticSearchReservation {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
-	public ElasticSearchReservation(String uuid, Reservation reservation) {
+	public ElasticSearchReservation(String uuid, Long seatId, Long eventId, Long eventTimesId, int seatNumber) {
 		this.id = uuid;
-		this.eventId = reservation.getEventId();
-		this.eventTimesId = reservation.getEventTimesId();
-		this.seatId = reservation.getSeatId();
-		this.seatNumber = reservation.getSeatNumber();
-		this.status = reservation.getStatus();
+		this.eventId = eventId;
+		this.eventTimesId = eventTimesId;
+		this.seatId = seatId;
+		this.seatNumber = seatNumber;
 	}
 
 	public void updateStatus(Status status) {
