@@ -40,7 +40,11 @@ public class TicketService {
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 		elasticSearchReservation.updateStatus(Status.PURCHASE);
 		elasticsearchTemplate.update(elasticSearchReservation);
-		User users = userRepository.findByEmail(userEmail).orElseThrow();
+		User users = userRepository.findByEmail(userEmail).orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER));
+		Ticket ticket = ticketRepository.findByReservationId(ticketRequestDto.getReservationId());
+		if (ticket != null && ticket.getStatus().equals(Status.PURCHASE)) {
+			throw new GlobalException(HttpStatus.BAD_REQUEST, ExceptionCode.PURCHASED_TICKET);
+		}
 		return new TicketResponseDto(ticketRepository.save(new Ticket(elasticSearchReservation, users.getId())));
 	}
 

@@ -5,7 +5,9 @@ import lombok.Getter;
 @Getter
 public enum ExceptionCode {
 
+	// 티켓
 	NOT_EXIST_TICKET("티켓 정보가 존재하지 않습니다."),
+	PURCHASED_TICKET("이미 구매된 티켓 입니다."),
 
 	// 공연장
 	NOT_EXIST_STAGE("공연장 정보가 존재하지 않습니다."),
