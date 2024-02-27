@@ -36,7 +36,7 @@ public class SecurityConfig {
 					.requestMatchers("/api/v1/admin/**")
 					.hasRole("ADMIN")
 					.requestMatchers("/api/v1/sse-connection")
-					.authenticated()
+					.permitAll()
 					.anyRequest()
 					.authenticated())
 

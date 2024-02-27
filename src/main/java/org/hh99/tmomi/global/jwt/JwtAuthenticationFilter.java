@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtTokenProvider jwtTokenProvider;
 	private static final String[] WHITELIST = {
 		"/api/v1/signin", // 로그인
-		"/api/v1/signup"  // 회원가입
+		"/api/v1/signup",  // 회원가입
 	};
 	private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -41,6 +41,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		String token = resolveToken(request);
+		if (token == null && path.equals("/api/v1/sse-connection")) {
+			chain.doFilter(request, response);
+			return;
+		}
+
 		try {
 			jwtTokenProvider.validateToken(token);
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);
