@@ -12,7 +12,6 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @EnableElasticsearchRepositories(basePackages = "org.hh99.tmomi.domain.reservation")
 @SpringBootApplication
 public class TmomiApplication {
-
 	public static void main(String[] args) {
 
 		SpringApplication.run(TmomiApplication.class, args);
