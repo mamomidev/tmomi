@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfigurat
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
-@EnableElasticsearchRepositories
+@EnableElasticsearchRepositories(basePackages = "org.hh99.tmomi.domain.reservation.respository")
 public class ElasticSearchConfig extends ElasticsearchConfiguration {
 
 	@Value("${spring.data.elasticsearch.server}")
