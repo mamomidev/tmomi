@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.hh99.tmomi.global.redis.RefreshToken;
 import org.hh99.tmomi.global.redis.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +28,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
@@ -160,10 +160,14 @@ public class JwtTokenProvider {
 
 	public void createCookieAccessToken(String accessToken, HttpServletResponse httpServletResponse) throws
 		UnsupportedEncodingException {
-		Cookie cookie = new Cookie("Authorization",
-			URLEncoder.encode("Bearer " + accessToken, "utf-8").replaceAll("\\+", "%20"));
-		cookie.setPath("/");
-		cookie.setMaxAge(604800);  // 쿠키 유효 시간 : 일주일
-		httpServletResponse.addCookie(cookie);
+		ResponseCookie cookie = ResponseCookie.from("Authorization",
+				URLEncoder.encode("Bearer " + accessToken, "utf-8").replaceAll("\\+", "%20"))
+			.path("/")
+			.sameSite("None")
+			.httpOnly(false)
+			.secure(true)
+			.maxAge(604800)
+			.build();
+		httpServletResponse.addHeader("Set-Cookie", cookie.toString());
 	}
 }
