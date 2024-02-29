@@ -14,8 +14,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@EnableRedisRepositories(basePackages = "org.hh99.tmomi.global.redis", enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP
-)
+@EnableRedisRepositories(basePackages = "org.hh99.tmomi.global.redis", enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
 @Configuration
 public class RedisConfig {
 
