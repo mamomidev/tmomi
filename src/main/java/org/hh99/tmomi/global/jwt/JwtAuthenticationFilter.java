@@ -27,7 +27,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		"/api/v1/signin", // 로그인
 		"/api/v1/signup",  // 회원가입
 		"/health",
-		"/"
+		"/",
+		"/actuator/**",
+		"/actuator/health"
 	};
 	private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
