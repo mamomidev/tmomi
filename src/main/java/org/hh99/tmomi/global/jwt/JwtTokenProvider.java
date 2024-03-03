@@ -115,7 +115,7 @@ public class JwtTokenProvider {
 
 	public String validateRefreshToken(String accessToken) {
 		String refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
-			.orElseThrow(() -> new ExpiredJwtException(null, null, "데이터가 없음"))
+			.orElseThrow(() -> new ExpiredJwtException(null, null, "AccessToken으로 RefreshToken 조회 시 데이터가 없습니다."))
 			.getRefreshToken();
 		try {
 			Jwts.parserBuilder()
@@ -155,7 +155,10 @@ public class JwtTokenProvider {
 				.getBody();
 		} catch (ExpiredJwtException e) {
 			return e.getClaims();
+		} catch (IllegalArgumentException e) {
+			log.info("JWT claims string is empty.", e);
 		}
+		return null;
 	}
 
 	public void createCookieAccessToken(String accessToken, HttpServletResponse httpServletResponse) throws
