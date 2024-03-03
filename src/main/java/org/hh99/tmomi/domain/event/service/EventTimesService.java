@@ -40,10 +40,11 @@ public class EventTimesService {
 
 		List<Seat> seatList = seatRepository.findByStageId(event.getStage().getId());
 		List<ElasticSearchReservation> elasticSearchReservationList = new ArrayList<>();
+		String uuid = "";
 
 		for (Seat seat : seatList) {
 			for (int j = 1; j <= seat.getSeatCapacity(); j++) {
-				String uuid = UUID.randomUUID().toString();
+				uuid = UUID.randomUUID().toString();
 				ElasticSearchReservation elasticSearchReservation = new ElasticSearchReservation(uuid, seat.getId(),
 					event.getId(), eventTimes.getId(), j);
 				elasticSearchReservationList.add(elasticSearchReservation);
