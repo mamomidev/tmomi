@@ -34,23 +34,32 @@ public class EventTimesService {
 	@Transactional
 	public void createEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventId) {
 		Event event = eventRepository.findById(eventId)
-			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
+				.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
 		EventTimes eventTimes = new EventTimes(eventTimesRequestDto, event);
 		eventTimesRepository.save(eventTimes);
 
 		List<Seat> seatList = seatRepository.findByStageId(event.getStage().getId());
 		List<ElasticSearchReservation> elasticSearchReservationList = new ArrayList<>();
 		String uuid = "";
+		int batchSize = 10000;
 
 		for (Seat seat : seatList) {
 			for (int j = 1; j <= seat.getSeatCapacity(); j++) {
 				uuid = UUID.randomUUID().toString();
 				ElasticSearchReservation elasticSearchReservation = new ElasticSearchReservation(uuid, seat.getId(),
-					event.getId(), eventTimes.getId(), j);
+						event.getId(), eventTimes.getId(), j);
 				elasticSearchReservationList.add(elasticSearchReservation);
+
+				if (elasticSearchReservationList.size() >= batchSize) {
+					elasticSearchReservationRepository.saveAll(elasticSearchReservationList);
+					elasticSearchReservationList.clear();
+				}
 			}
 		}
-		elasticSearchReservationRepository.saveAll(elasticSearchReservationList);
+
+		if (!elasticSearchReservationList.isEmpty()) {
+			elasticSearchReservationRepository.saveAll(elasticSearchReservationList);
+		}
 	}
 
 	@Transactional
