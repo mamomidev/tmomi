@@ -1,5 +1,6 @@
 package org.hh99.tmomi.domain.ticket.service;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.hh99.tmomi.domain.reservation.Status;
@@ -20,6 +21,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,5 +114,12 @@ public class TicketService {
 			elasticSearchReservation.updateStatus(Status.NONE);
 			elasticsearchTemplate.update(elasticSearchReservation);
 		}
+	}
+
+	public List<TicketResponseDto> getMyTicketList(String email) {
+		Long userId = userRepository.findByEmail(email).orElseThrow(() ->
+				new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER)).getId();
+
+		return ticketRepository.findAllByUserId(userId).stream().map(TicketResponseDto::new).toList();
 	}
 }
