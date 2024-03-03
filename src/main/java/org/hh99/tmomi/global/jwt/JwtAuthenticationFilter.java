@@ -29,7 +29,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		"/health",
 		"/",
 		"/actuator/**",
-		"/api/v1/sse-connection"
+		"/api/v1/sse-connection",
+		"/api/v1/eventTimes/reservation"
 	};
 	private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 

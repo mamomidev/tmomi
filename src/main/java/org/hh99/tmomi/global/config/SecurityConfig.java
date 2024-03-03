@@ -41,6 +41,8 @@ public class SecurityConfig {
 					.permitAll()
 					.requestMatchers("/actuator/**")
 					.permitAll()
+					.requestMatchers("/api/v1/eventTimes/reservation")
+					.permitAll()
 					.anyRequest()
 					.authenticated())
 
