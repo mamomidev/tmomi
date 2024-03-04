@@ -18,7 +18,7 @@ public enum ExceptionCode {
 
 	// 유저
 	NOT_EXIST_USER("유저 정보가 존재하지 않습니다."),
-
+	EXIST_USER("이미 존재하는 유저입니다."),
 	// 좌석
 	NOT_EXIST_SEAT("좌석 정보가 존재하지 않습니다."),
 

@@ -54,7 +54,7 @@ public class UserService implements UserDetailsService {
 	@Transactional
 	public UserResponseDto signUp(UserRequestDto userRequestDto) {
 		if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
-			throw new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER);
+			throw new GlobalException(HttpStatus.BAD_REQUEST, ExceptionCode.EXIST_USER);
 		}
 		userRequestDto.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
 		userRequestDto.setAuthor(UserAuthEnum.USER);
