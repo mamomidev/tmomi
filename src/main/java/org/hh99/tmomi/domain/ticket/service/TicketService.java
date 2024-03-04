@@ -21,7 +21,6 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +51,8 @@ public class TicketService {
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 		elasticSearchReservation.updateStatus(Status.PURCHASE);
 		elasticsearchTemplate.update(elasticSearchReservation);
-		User users = userRepository.findByEmail(userEmail).orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER));
+		User users = userRepository.findByEmail(userEmail)
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER));
 		Ticket ticket = ticketRepository.findByReservationId(ticketRequestDto.getReservationId());
 
 		if (ticket != null && ticket.getStatus().equals(Status.PURCHASE)) {
@@ -90,7 +90,7 @@ public class TicketService {
 				elasticReservationRequestDto.getReservationId())
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 
-		long waitTime = 0L;
+		long waitTime = 1L;
 		long leaseTime = 180L;
 		boolean isLockAcquired = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS); // 락 획득 시도
 
@@ -118,7 +118,7 @@ public class TicketService {
 
 	public List<TicketResponseDto> getMyTicketList(String email) {
 		Long userId = userRepository.findByEmail(email).orElseThrow(() ->
-				new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER)).getId();
+			new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER)).getId();
 
 		return ticketRepository.findAllByUserId(userId).stream().map(TicketResponseDto::new).toList();
 	}
