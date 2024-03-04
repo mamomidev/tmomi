@@ -82,13 +82,9 @@ public class TicketService {
 		String email) throws
 		InterruptedException {
 
-		String uuid = elasticReservationRequestDto.getReservationId();
-		String lockName = "seat_lock:" + uuid;
+		String reservationId = elasticReservationRequestDto.getReservationId();
+		String lockName = "seat_lock:" + reservationId;
 		RLock rLock = redissonClient.getLock(lockName);
-
-		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(
-				elasticReservationRequestDto.getReservationId())
-			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 
 		long waitTime = 5L;
 		long leaseTime = 180L;
@@ -98,7 +94,15 @@ public class TicketService {
 			throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.LOCKED);
 		}
 
-		seatValidateRepository.save(new SeatValidate(uuid, email));
+		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(
+				elasticReservationRequestDto.getReservationId())
+				.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
+
+		if(!elasticSearchReservation.getStatus().equals(Status.NONE)){
+            throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.LOCKED);
+		}
+
+		seatValidateRepository.save(new SeatValidate(reservationId, email));
 		elasticSearchReservation.updateStatus(Status.RESERVATION);
 		elasticsearchTemplate.update(elasticSearchReservation);
 	}
