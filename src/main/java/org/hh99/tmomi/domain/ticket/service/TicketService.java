@@ -98,9 +98,9 @@ public class TicketService {
 				elasticReservationRequestDto.getReservationId())
 				.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 
-		if(!elasticSearchReservation.getStatus().equals(Status.NONE)){
+		/*if(!elasticSearchReservation.getStatus().equals(Status.NONE)){
             throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.LOCKED);
-		}
+		}*/
 
 		seatValidateRepository.save(new SeatValidate(reservationId, email));
 		elasticSearchReservation.updateStatus(Status.RESERVATION);
