@@ -40,21 +40,21 @@ class EventTimesServiceTest extends Specification {
         }
         EventTimes eventTimes = new EventTimes(eventTimesRequestDto, event)
         List<Seat> seatList = Arrays.asList(Mock(Seat) {
-            getSeatCapacity() >> 100000L
+            getSeatCapacity() >> 100001L
         })
 
-        List<ElasticSearchReservation> elasticSearchReservationList = new ArrayList<>()
+        List<ElasticSearchReservation> elasticSearchReservationList = Mock(ArrayList)
 
         and: "Mock 객체의 동작 정의"
         eventRepository.findById(_ as Long) >> Optional.of(event)
         eventTimesRepository.save(_) >> eventTimes
         seatRepository.findByStageId(_ as Long) >> seatList
-        if(elasticSearchReservationList.size() > batchSize) {
+        if (elasticSearchReservationList.size() > batchSize) {
             elasticSearchReservationRepository.saveAll(_) >> _
             elasticSearchReservationList.clear()
         }
 
-        if(!elasticSearchReservationList.isEmpty()) {
+        if (!elasticSearchReservationList.isEmpty()) {
             elasticSearchReservationRepository.saveAll(_) >> _
         }
 
