@@ -86,7 +86,7 @@ public class TicketService {
 		String lockName = "seat_lock:" + reservationId;
 		RLock rLock = redissonClient.getLock(lockName);
 
-		long waitTime = 5L;
+		long waitTime = 0L;
 		long leaseTime = 180L;
 		boolean isLockAcquired = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS); // 락 획득 시도
 
