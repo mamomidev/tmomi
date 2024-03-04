@@ -41,7 +41,7 @@ public class EventTimesService {
 		List<Seat> seatList = seatRepository.findByStageId(event.getStage().getId());
 		List<ElasticSearchReservation> elasticSearchReservationList = new ArrayList<>();
 
-		int batchSize = 10000;
+		int batchSize = 100000;
 
 		seatList.parallelStream().forEach((seat) -> {
 			for (int j = 1; j <= seat.getSeatCapacity(); j++) {
