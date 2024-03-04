@@ -32,6 +32,7 @@ class EventTimesServiceTest extends Specification {
         given: "테스트에 필요한 데이터 설정"
         EventTimesRequestDto eventTimesRequestDto = new EventTimesRequestDto()
         Long eventId = 123L
+        int batchSize = 100000
         Event event = Mock() {
             getStage() >> Mock(Stage) {
                 getId() >> 1L
@@ -39,7 +40,7 @@ class EventTimesServiceTest extends Specification {
         }
         EventTimes eventTimes = new EventTimes(eventTimesRequestDto, event)
         List<Seat> seatList = Arrays.asList(Mock(Seat) {
-            getSeatCapacity() >> 10L
+            getSeatCapacity() >> 100000L
         })
 
         List<ElasticSearchReservation> elasticSearchReservationList = new ArrayList<>()
@@ -48,8 +49,14 @@ class EventTimesServiceTest extends Specification {
         eventRepository.findById(_ as Long) >> Optional.of(event)
         eventTimesRepository.save(_) >> eventTimes
         seatRepository.findByStageId(_ as Long) >> seatList
-        elasticSearchReservationRepository.saveAll(_) >> _
-        elasticSearchReservationList.clear()
+        if(elasticSearchReservationList.size() > batchSize) {
+            elasticSearchReservationRepository.saveAll(_) >> _
+            elasticSearchReservationList.clear()
+        }
+
+        if(!elasticSearchReservationList.isEmpty()) {
+            elasticSearchReservationRepository.saveAll(_) >> _
+        }
 
         when: "메서드 호출"
         service.createEventTimes(eventTimesRequestDto, eventId)
