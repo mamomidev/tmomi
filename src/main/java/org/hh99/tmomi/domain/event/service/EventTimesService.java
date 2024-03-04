@@ -3,6 +3,7 @@ package org.hh99.tmomi.domain.event.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto;
@@ -34,7 +35,7 @@ public class EventTimesService {
 	@Transactional
 	public void createEventTimes(EventTimesRequestDto eventTimesRequestDto, Long eventId) {
 		Event event = eventRepository.findById(eventId)
-				.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_EVENT));
 		EventTimes eventTimes = new EventTimes(eventTimesRequestDto, event);
 		eventTimesRepository.save(eventTimes);
 
@@ -43,19 +44,19 @@ public class EventTimesService {
 
 		int batchSize = 10000;
 
-		for (Seat seat : seatList) {
-			for (int j = 1; j <= seat.getSeatCapacity(); j++) {
+		seatList.parallelStream().forEach((seat) -> {
+			IntStream.rangeClosed(1, seat.getSeatCapacity()).parallel().forEach(j -> {
 				String uuid = UUID.randomUUID().toString();
 				ElasticSearchReservation elasticSearchReservation = new ElasticSearchReservation(uuid, seat.getId(),
-						event.getId(), eventTimes.getId(), j);
+					event.getId(), eventTimes.getId(), j);
 				elasticSearchReservationList.add(elasticSearchReservation);
 
 				if (elasticSearchReservationList.size() >= batchSize) {
 					elasticSearchReservationRepository.saveAll(elasticSearchReservationList);
 					elasticSearchReservationList.clear();
 				}
-			}
-		}
+			});
+		});
 
 		if (!elasticSearchReservationList.isEmpty()) {
 			elasticSearchReservationRepository.saveAll(elasticSearchReservationList);
