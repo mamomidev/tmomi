@@ -3,7 +3,6 @@ package org.hh99.tmomi.domain.event.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.IntStream;
 
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesRequestDto;
 import org.hh99.tmomi.domain.event.dto.eventtimes.EventTimesResponseDto;
@@ -45,7 +44,7 @@ public class EventTimesService {
 		int batchSize = 10000;
 
 		seatList.parallelStream().forEach((seat) -> {
-			IntStream.rangeClosed(1, seat.getSeatCapacity()).parallel().forEach(j -> {
+			for (int j = 1; j <= seat.getSeatCapacity(); j++) {
 				String uuid = UUID.randomUUID().toString();
 				ElasticSearchReservation elasticSearchReservation = new ElasticSearchReservation(uuid, seat.getId(),
 					event.getId(), eventTimes.getId(), j);
@@ -55,7 +54,7 @@ public class EventTimesService {
 					elasticSearchReservationRepository.saveAll(elasticSearchReservationList);
 					elasticSearchReservationList.clear();
 				}
-			});
+			}
 		});
 
 		if (!elasticSearchReservationList.isEmpty()) {
