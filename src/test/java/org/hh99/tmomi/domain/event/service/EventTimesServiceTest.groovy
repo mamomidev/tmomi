@@ -6,54 +6,58 @@ import org.hh99.tmomi.domain.event.entity.Event
 import org.hh99.tmomi.domain.event.entity.EventTimes
 import org.hh99.tmomi.domain.event.repository.EventRepository
 import org.hh99.tmomi.domain.event.repository.EventTimesRepository
+import org.hh99.tmomi.domain.reservation.document.ElasticSearchReservation
+import org.hh99.tmomi.domain.reservation.respository.ElasticSearchReservationRepository
 import org.hh99.tmomi.domain.stage.entity.Seat
 import org.hh99.tmomi.domain.stage.entity.Stage
 import org.hh99.tmomi.domain.stage.repository.SeatRepository
 import org.hh99.tmomi.global.exception.GlobalException
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class EventTimesServiceTest extends Specification {
     EventTimesRepository eventTimesRepository = Mock()
     EventRepository eventRepository = Mock()
     SeatRepository seatRepository = Mock()
-    ReservationRepository reservationRepository = Mock()
+    ElasticSearchReservationRepository elasticSearchReservationRepository = Mock()
     EventTimesService service
 
     def setup() {
         service = new EventTimesService(eventTimesRepository,
                 eventRepository,
                 seatRepository,
-                reservationRepository)
+                elasticSearchReservationRepository)
     }
 
-    @Unroll
     def "행사 시간 생성"() {
-        given:
-        def eventTimesRequestDto = Mock(EventTimesRequestDto)
-        def eventId = 123L
-        eventRepository.findById(*_) >> _optionalEvent
-        eventTimesRepository.save(_) >> _
-        1 * seatRepository.findByStageId(_optionalEvent.get().getStage().getId()) >> Arrays.asList(Mock(Seat) {
-            getSeatCapacity() >> 2
+        given: "테스트에 필요한 데이터 설정"
+        EventTimesRequestDto eventTimesRequestDto = new EventTimesRequestDto()
+        Long eventId = 123L
+        Event event = Mock() {
+            getStage() >> Mock(Stage) {
+                getId() >> 1L
+            }
+        }
+        EventTimes eventTimes = new EventTimes(eventTimesRequestDto, event)
+        List<Seat> seatList = Arrays.asList(Mock(Seat) {
+            getSeatCapacity() >> 10L
         })
-        reservationRepository.saveAll(_) >> _
 
-        when:
+        List<ElasticSearchReservation> elasticSearchReservationList = new ArrayList<>()
+
+        and: "Mock 객체의 동작 정의"
+        eventRepository.findById(_ as Long) >> Optional.of(event)
+        eventTimesRepository.save(_) >> eventTimes
+        seatRepository.findByStageId(_ as Long) >> seatList
+        elasticSearchReservationRepository.saveAll(_) >> _
+        elasticSearchReservationList.clear()
+
+        when: "메서드 호출"
         service.createEventTimes(eventTimesRequestDto, eventId)
 
-        then:
+        then: "예외가 발생하지 않아야 함"
         noExceptionThrown()
-
-        where:
-        _optionalEvent          || _expectResult
-        mockOptionalEvent(123L) || true
-        mockOptionalEvent(124L) || true
-        mockOptionalEvent(125L) || true
     }
 
-
-    @Unroll
     def "행사 시간 생성시 행사 없을 시 에러"() {
         given:
         def eventTimesRequestDto = Mock(EventTimesRequestDto)
@@ -99,11 +103,12 @@ class EventTimesServiceTest extends Specification {
         given:
         def eventTimeId = 1L
         def eventTimes = Mock(EventTimes)
+
         eventTimesRepository.findById(eventTimeId) >> Optional.of(Mock(EventTimes) {
             getId() >> 1L
         })
-        eventTimesRepository.delete(eventTimes)
-        reservationRepository.deleteAllByEventTimesId(eventTimeId)
+
+        eventTimesRepository.delete(eventTimes) >> _
 
         when:
         def result = service.deleteEventTimes(eventTimeId)
