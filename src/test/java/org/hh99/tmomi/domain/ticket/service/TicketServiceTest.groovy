@@ -1,12 +1,16 @@
 package org.hh99.tmomi.domain.ticket.service
 
+import org.hh99.tmomi.domain.event.repository.EventRepository
 import org.hh99.tmomi.domain.reservation.Status
 import org.hh99.tmomi.domain.reservation.respository.ElasticSearchReservationRepository
+import org.hh99.tmomi.domain.stage.repository.SeatRepository
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto
 import org.hh99.tmomi.domain.ticket.entity.Ticket
 import org.hh99.tmomi.domain.ticket.repository.TicketRepository
+import org.hh99.tmomi.domain.user.repository.UserRepository
 import org.hh99.tmomi.global.exception.GlobalException
+import org.hh99.tmomi.global.redis.SeatValidateRepository
 import org.redisson.api.RLock
 import org.redisson.api.RedissonClient
 import org.springframework.util.CollectionUtils
@@ -17,11 +21,16 @@ import java.util.concurrent.TimeUnit
 class TicketServiceTest extends Specification {
     TicketService service
     TicketRepository ticketRepository = Mock(TicketRepository)
+    UserRepository userRepository = Mock(UserRepository)
+    EventRepository eventRepository = Mock(EventRepository)
+    SeatRepository seatRepository = Mock(SeatRepository)
     ElasticSearchReservationRepository reservationRepository = Mock(ElasticSearchReservationRepository)
     RedissonClient redissonClient = Mock(RedissonClient)
+    SeatValidateRepository seatValidateRepository = Mock(SeatValidateRepository)
 
     def setup() {
-        service = new TicketService(ticketRepository, reservationRepository, redissonClient)
+        service = new TicketService(ticketRepository, userRepository, eventRepository, reservationRepository,
+                seatRepository, redissonClient, seatValidateRepository)
     }
 
     def "티켓 생성"() {
