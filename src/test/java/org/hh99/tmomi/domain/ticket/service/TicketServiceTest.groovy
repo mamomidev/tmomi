@@ -13,6 +13,7 @@ import org.hh99.tmomi.global.exception.GlobalException
 import org.hh99.tmomi.global.redis.SeatValidateRepository
 import org.redisson.api.RLock
 import org.redisson.api.RedissonClient
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate
 import org.springframework.util.CollectionUtils
 import spock.lang.Specification
 
@@ -24,13 +25,15 @@ class TicketServiceTest extends Specification {
     UserRepository userRepository = Mock(UserRepository)
     EventRepository eventRepository = Mock(EventRepository)
     SeatRepository seatRepository = Mock(SeatRepository)
-    ElasticSearchReservationRepository reservationRepository = Mock(ElasticSearchReservationRepository)
+
+    ElasticSearchReservationRepository elasticSearchReservationRepository = Mock(ElasticSearchReservationRepository)
+    ElasticsearchTemplate elasticsearchTemplate = Mock(ElasticsearchTemplate)
     RedissonClient redissonClient = Mock(RedissonClient)
     SeatValidateRepository seatValidateRepository = Mock(SeatValidateRepository)
 
     def setup() {
-        service = new TicketService(ticketRepository, userRepository, eventRepository, reservationRepository,
-                seatRepository, redissonClient, seatValidateRepository)
+        service = new TicketService(ticketRepository, userRepository, eventRepository, seatRepository,
+                elasticSearchReservationRepository, elasticsearchTemplate, redissonClient, seatValidateRepository)
     }
 
     def "티켓 생성"() {
