@@ -36,9 +36,11 @@ public class TicketService {
 	private final UserRepository userRepository;
 	private final EventRepository eventRepository;
 	private final SeatRepository seatRepository;
+
 	private final ElasticSearchReservationRepository elasticSearchReservationRepository;
-	private final RedissonClient redissonClient;
 	private final ElasticsearchTemplate elasticsearchTemplate;
+
+	private final RedissonClient redissonClient;
 	private final SeatValidateRepository seatValidateRepository;
 
 	@Transactional
@@ -66,7 +68,8 @@ public class TicketService {
 		String eventName = eventRepository.findById(elasticSearchReservation.getEventId()).orElseThrow().getEventName();
 		String seatName = seatRepository.findById(elasticSearchReservation.getSeatId()).orElseThrow().getSeatName();
 
-		return new TicketResponseDto(ticketRepository.save(new Ticket(elasticSearchReservation, users.getId())), userEmail, eventName, seatName);
+		return new TicketResponseDto(ticketRepository.save(new Ticket(elasticSearchReservation, users.getId())),
+			userEmail, eventName, seatName);
 	}
 
 	@Transactional
@@ -103,10 +106,10 @@ public class TicketService {
 
 		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(
 				elasticReservationRequestDto.getReservationId())
-				.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
+			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 
-		if(!elasticSearchReservation.getStatus().equals(Status.NONE)){
-            throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.LOCKED);
+		if (!elasticSearchReservation.getStatus().equals(Status.NONE)) {
+			throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.LOCKED);
 		}
 
 		seatValidateRepository.save(new SeatValidate(reservationId, email));
@@ -135,6 +138,6 @@ public class TicketService {
 			String eventName = eventRepository.findById(ticket.getEventId()).orElseThrow().getEventName();
 			String seatName = seatRepository.findById(ticket.getSeatId()).orElseThrow().getSeatName();
 			return new TicketResponseDto(ticket, email, eventName, seatName);
-        }).toList();
+		}).toList();
 	}
 }
