@@ -3,10 +3,12 @@ package org.hh99.tmomi.domain.ticket.service;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.hh99.tmomi.domain.event.repository.EventRepository;
 import org.hh99.tmomi.domain.reservation.Status;
 import org.hh99.tmomi.domain.reservation.document.ElasticSearchReservation;
 import org.hh99.tmomi.domain.reservation.dto.ElasticReservationRequestDto;
 import org.hh99.tmomi.domain.reservation.respository.ElasticSearchReservationRepository;
+import org.hh99.tmomi.domain.stage.repository.SeatRepository;
 import org.hh99.tmomi.domain.ticket.dto.TicketRequestDto;
 import org.hh99.tmomi.domain.ticket.dto.TicketResponseDto;
 import org.hh99.tmomi.domain.ticket.entity.Ticket;
@@ -32,6 +34,8 @@ public class TicketService {
 
 	private final TicketRepository ticketRepository;
 	private final UserRepository userRepository;
+	private final EventRepository eventRepository;
+	private final SeatRepository seatRepository;
 	private final ElasticSearchReservationRepository elasticSearchReservationRepository;
 	private final RedissonClient redissonClient;
 	private final ElasticsearchTemplate elasticsearchTemplate;
@@ -59,7 +63,10 @@ public class TicketService {
 			throw new GlobalException(HttpStatus.BAD_REQUEST, ExceptionCode.PURCHASED_TICKET);
 		}
 
-		return new TicketResponseDto(ticketRepository.save(new Ticket(elasticSearchReservation, users.getId())));
+		String eventName = eventRepository.findById(elasticSearchReservation.getEventId()).orElseThrow().getEventName();
+		String seatName = seatRepository.findById(elasticSearchReservation.getSeatId()).orElseThrow().getSeatName();
+
+		return new TicketResponseDto(ticketRepository.save(new Ticket(elasticSearchReservation, users.getId())), userEmail, eventName, seatName);
 	}
 
 	@Transactional
@@ -124,6 +131,10 @@ public class TicketService {
 		Long userId = userRepository.findByEmail(email).orElseThrow(() ->
 			new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_USER)).getId();
 
-		return ticketRepository.findAllByUserId(userId).stream().map(TicketResponseDto::new).toList();
+		return ticketRepository.findAllByUserId(userId).stream().map((Ticket ticket) -> {
+			String eventName = eventRepository.findById(ticket.getEventId()).orElseThrow().getEventName();
+			String seatName = seatRepository.findById(ticket.getSeatId()).orElseThrow().getSeatName();
+			return new TicketResponseDto(ticket, email, eventName, seatName);
+        }).toList();
 	}
 }
