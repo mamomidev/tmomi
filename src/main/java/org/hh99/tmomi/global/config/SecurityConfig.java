@@ -43,6 +43,8 @@ public class SecurityConfig {
 					.permitAll()
 					.requestMatchers("/api/v1/eventTimes/reservation")
 					.permitAll()
+					.requestMatchers("/alert-test")
+					.permitAll()
 					.anyRequest()
 					.authenticated())
 
