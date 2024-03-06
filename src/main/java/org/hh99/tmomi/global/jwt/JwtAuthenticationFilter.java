@@ -43,7 +43,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		ServletException {
 
 		String path = request.getRequestURI();
-		log.info("---------------------------" + path + "---------------------------");
 		if (Arrays.stream(WHITELIST).anyMatch(pattern -> antPathMatcher.match(pattern, path))) {
 			chain.doFilter(request, response);
 			return;
