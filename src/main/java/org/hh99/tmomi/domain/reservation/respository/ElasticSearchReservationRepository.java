@@ -7,5 +7,5 @@ import org.hh99.tmomi.domain.reservation.document.ElasticSearchReservation;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 public interface ElasticSearchReservationRepository extends ElasticsearchRepository<ElasticSearchReservation, String> {
-	List<ElasticSearchReservation> findAllByEventTimesIdAndStatus(Long eventTimeId, Status status);
+	List<ElasticSearchReservation> findAllByEventTimesId(Long eventTimeId);
 }
