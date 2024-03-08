@@ -104,8 +104,7 @@ public class TicketService {
 			throw new GlobalException(HttpStatus.LOCKED, ExceptionCode.LOCKED);
 		}
 
-		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(
-				elasticReservationRequestDto.getReservationId())
+		ElasticSearchReservation elasticSearchReservation = elasticSearchReservationRepository.findById(reservationId)
 			.orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, ExceptionCode.NOT_EXIST_RESERVATION));
 
 		if (!elasticSearchReservation.getStatus().equals(Status.NONE)) {
