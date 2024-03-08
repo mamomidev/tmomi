@@ -35,6 +35,8 @@ public class SecurityConfig {
 					.permitAll()
 					.requestMatchers("/api/v1/admin/**")
 					.hasRole("ADMIN")
+					.requestMatchers("/api/v1/sse-connection/**")
+					.permitAll()
 					.requestMatchers("/api/v1/sse-connection")
 					.permitAll()
 					.requestMatchers("/health")
@@ -45,8 +47,10 @@ public class SecurityConfig {
 					.permitAll()
 					.requestMatchers("/alert-test")
 					.permitAll()
+					.requestMatchers("/")
+					.permitAll()
 					.anyRequest()
-					.authenticated())
+					.permitAll())
 
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 		return httpSecurity.build();
