@@ -28,7 +28,7 @@ public class TicketController {
 		return ResponseEntity.ok(ticketService.createTicket(ticketRequestDto, userDetails.getUsername()));
 	}
 
-	@DeleteMapping("/{ticketId}/refund")
+	@DeleteMapping("/{ticketId}")
 	public ResponseEntity<TicketResponseDto> refundTicket(@PathVariable Long ticketId) {
 		ticketService.refundTicket(ticketId);
 		return ResponseEntity.ok().build();
