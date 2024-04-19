@@ -79,7 +79,8 @@
 
 # 서비스 아키텍처
 
-![image](https://github.com/mamomidev/tmomi-project/assets/48711163/166a5671-cf9d-4cff-8b33-6c950681194c)
+![image](https://github.com/mamomidev/tmomi-web/assets/102348866/0f747f71-6a33-4a1a-8d6d-122cd85eb908)
+
 <br/>
 
 # 기술 스택
