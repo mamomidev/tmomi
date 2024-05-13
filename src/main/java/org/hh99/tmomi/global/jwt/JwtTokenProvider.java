@@ -99,6 +99,19 @@ public class JwtTokenProvider {
 	}
 
 	public void validateToken(String token) {
+		parseAndValidateToken(token);
+	}
+
+	public String validateRefreshToken(String accessToken) {
+		String refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
+			.orElseThrow(() -> new ExpiredJwtException(null, null, "AccessToken으로 RefreshToken 조회 시 데이터가 없습니다."))
+			.getRefreshToken();
+
+		parseAndValidateToken(refreshToken);
+		return null;
+	}
+
+	public void parseAndValidateToken(String token) {
 		try {
 			Jwts.parserBuilder()
 				.setSigningKey(key)
@@ -106,31 +119,15 @@ public class JwtTokenProvider {
 				.parseClaimsJws(token);
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT Token", e);
+			throw new RuntimeException("유효하지 않은 JWT 토큰입니다.");
 		} catch (UnsupportedJwtException e) {
 			log.info("Unsupported JWT Token", e);
+			throw new RuntimeException("지원하지 않은 JWT 토큰입니다.");
 		} catch (IllegalArgumentException e) {
 			log.info("JWT claims string is empty.", e);
+			throw new RuntimeException("JWT 클레임 문자열이 비어 있습니다.");
 		}
-	}
 
-	public String validateRefreshToken(String accessToken) {
-		String refreshToken = refreshTokenRepository.findByAccessToken(accessToken)
-			.orElseThrow(() -> new ExpiredJwtException(null, null, "AccessToken으로 RefreshToken 조회 시 데이터가 없습니다."))
-			.getRefreshToken();
-		try {
-			Jwts.parserBuilder()
-				.setSigningKey(key)
-				.build()
-				.parseClaimsJws(refreshToken);
-			return refreshToken;
-		} catch (SecurityException | MalformedJwtException e) {
-			log.info("Invalid JWT Token", e);
-		} catch (UnsupportedJwtException e) {
-			log.info("Unsupported JWT Token", e);
-		} catch (IllegalArgumentException e) {
-			log.info("JWT claims string is empty.", e);
-		}
-		return null;
 	}
 
 	public String reissuanceAccessToken(String accessToken, String refreshToken) {
